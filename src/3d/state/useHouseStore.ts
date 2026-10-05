@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { QualityTier, SpatialZone } from '@/types';
 import { detectDefaultQualityTier } from '@/3d/utils/quality';
 import { ReferenceCameraId } from '@/3d/camera/referenceCameras';
+import { MaterialDisplayMode } from '@/3d/materials/types';
 
 export type CameraMode = 'spline' | 'inspect' | 'free';
 
@@ -18,6 +19,10 @@ export interface HouseState {
   inspectTargetId: string | null;
   isDoorOpen: boolean;
   doorAngle: number; // in radians: 0.0 to -1.48 (~ -85 deg)
+
+  // M4 Material System State
+  materialMode: MaterialDisplayMode;
+  showMaterialPreview: boolean;
 
   // Interactive Project Modal
   activeProjectId: string | null;
@@ -37,6 +42,8 @@ export interface HouseState {
   setActiveRefCamera: (camId: ReferenceCameraId | null) => void;
   enterInspectMode: (targetId: string) => void;
   exitInspectMode: () => void;
+  setMaterialMode: (mode: MaterialDisplayMode) => void;
+  setShowMaterialPreview: (show: boolean) => void;
   openProjectModal: (projectId: string) => void;
   closeProjectModal: () => void;
   setDoorAngle: (angle: number) => void;
@@ -59,6 +66,9 @@ export const useHouseStore = create<HouseState>((set) => ({
   inspectTargetId: null,
   isDoorOpen: false,
   doorAngle: 0.0,
+
+  materialMode: 'pbr',
+  showMaterialPreview: false,
 
   activeProjectId: null,
   isModalOpen: false,
@@ -96,6 +106,16 @@ export const useHouseStore = create<HouseState>((set) => ({
     set({
       cameraMode: 'free',
       inspectTargetId: null,
+    }),
+
+  setMaterialMode: (mode) =>
+    set({
+      materialMode: mode,
+    }),
+
+  setShowMaterialPreview: (show) =>
+    set({
+      showMaterialPreview: show,
     }),
 
   openProjectModal: (projectId) =>

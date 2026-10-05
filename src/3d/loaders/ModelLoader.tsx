@@ -4,6 +4,7 @@ import React, { Component, useEffect, useMemo, Suspense } from 'react';
 import * as THREE from 'three';
 import { useGLTF } from '@react-three/drei';
 import { useHouseStore } from '@/3d/state/useHouseStore';
+import { applyArchitecturalMaterials } from '@/3d/materials/applyArchitecturalMaterials';
 
 export interface ModelLoaderProps {
   url: string;
@@ -58,7 +59,8 @@ class ModelErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryStat
 
 /**
  * Inner component that attempts to load GLTF/GLB using useGLTF.
- * Clones the scene graph safely while respecting Drei's shared asset cache.
+ * Clones the scene graph safely while respecting Drei's shared asset cache,
+ * and dynamically applies M4 PBR materials and validation display modes.
  */
 function GLTFModelInstance({
   url,
@@ -72,6 +74,7 @@ function GLTFModelInstance({
   const gltf = useGLTF(url);
   const setModelLoaded = useHouseStore((state) => state.setModelLoaded);
   const setModelError = useHouseStore((state) => state.setModelError);
+  const materialMode = useHouseStore((state) => state.materialMode);
 
   // Clone scene graph to allow independent instance transforms and shadow flags
   const clonedScene = useMemo(() => {
@@ -86,6 +89,11 @@ function GLTFModelInstance({
     return clone;
   }, [gltf.scene, castShadow, receiveShadow]);
 
+  // Apply PBR materials and react to materialMode changes (pbr, clay, normals, etc.)
+  useEffect(() => {
+    applyArchitecturalMaterials(clonedScene, materialMode);
+  }, [clonedScene, materialMode]);
+
   useEffect(() => {
     setModelLoaded(true);
     setModelError(null);
@@ -93,10 +101,7 @@ function GLTFModelInstance({
       onLoaded(clonedScene);
     }
 
-    // Note: Do NOT dispose shared geometries/materials from useGLTF cache here,
-    // as doing so corrupts the cache and breaks subsequent mounts / React Strict Mode.
     return () => {
-      // Instance unmount cleanup: detach from parent if attached
       if (clonedScene.parent) {
         clonedScene.parent.remove(clonedScene);
       }

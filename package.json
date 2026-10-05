@@ -13,6 +13,7 @@
     "type-check": "tsc --noEmit",
     "optimize-models": "node scripts/optimize-model.mjs",
     "verify-assets": "node scripts/verify-assets.mjs",
+    "generate-textures": "node scripts/generate-textures.mjs",
     "generate-house": "node scripts/generate-portfolio-house-glb.mjs"
   },
   "dependencies": {

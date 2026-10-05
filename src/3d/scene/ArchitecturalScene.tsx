@@ -7,7 +7,10 @@ import { SceneLighting } from '@/3d/lighting/SceneLighting';
 import { Atmosphere } from '@/3d/environment/Atmosphere';
 import { PlaceholderHouse } from '@/3d/scene/PlaceholderHouse';
 import { ModelLoader } from '@/3d/loaders/ModelLoader';
+import { WaterController } from '@/3d/materials/WaterController';
+import { MaterialPreviewScene } from '@/3d/materials/MaterialPreviewScene';
 import { getDefaultHouseModelUrl } from '@/3d/assets/config';
+import { useHouseStore } from '@/3d/state/useHouseStore';
 
 interface ArchitecturalSceneProps {
   modelUrl?: string | null;
@@ -16,15 +19,17 @@ interface ArchitecturalSceneProps {
 
 /**
  * Architectural 3D Scene Root.
- * Orchestrates camera, lighting, atmosphere, and architectural geometry.
+ * Orchestrates camera, lighting, atmosphere, materials, and architectural geometry.
  * Loads the master architectural model 'the_portfolio_house' via ModelLoader,
  * with graceful fallback to the procedural PlaceholderHouse.
+ * Incorporates M4 WaterController and MaterialPreviewScene validation modes.
  */
 export function ArchitecturalScene({
   modelUrl = getDefaultHouseModelUrl(),
   enableControls = true,
 }: ArchitecturalSceneProps) {
   const resolvedUrl = modelUrl ?? getDefaultHouseModelUrl();
+  const showMaterialPreview = useHouseStore((state) => state.showMaterialPreview);
 
   return (
     <>
@@ -37,20 +42,27 @@ export function ArchitecturalScene({
       {/* 3. Atmospheric Sky & Ground Horizon */}
       <Atmosphere />
 
-      {/* 4. Directional Sun & Ambient Lighting */}
+      {/* 4. Directional Sun & Ambient Neutral Lighting */}
       <SceneLighting />
 
-      {/* 5. Architectural Geometry: Master Reconstructed House Model or Fallback */}
-      <Suspense fallback={<PlaceholderHouse />}>
-        {resolvedUrl ? (
-          <ModelLoader
-            url={resolvedUrl}
-            fallback={<PlaceholderHouse />}
-          />
-        ) : (
-          <PlaceholderHouse />
-        )}
-      </Suspense>
+      {/* 5. M4 Dynamic Water Surface Ripple Animation */}
+      <WaterController />
+
+      {/* 6. Architectural Geometry or Studio Material Preview Scene */}
+      {showMaterialPreview ? (
+        <MaterialPreviewScene />
+      ) : (
+        <Suspense fallback={<PlaceholderHouse />}>
+          {resolvedUrl ? (
+            <ModelLoader
+              url={resolvedUrl}
+              fallback={<PlaceholderHouse />}
+            />
+          ) : (
+            <PlaceholderHouse />
+          )}
+        </Suspense>
+      )}
     </>
   );
 }

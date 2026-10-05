@@ -24,7 +24,7 @@ interface PlaceholderHouseProps {
  * - Double-height exhibition atrium with mezzanine walkways, glass balustrades with shoes/caps, and monolithic travertine plinth
  * - Complete site terrain, 8 agave succulent clusters, 8 chaparral scrub masses, and mountain horizon
  *
- * Strictly adheres to M3 milestone boundaries: neutral architectural PBR placeholder materials.
+ * M4 Material Realism: Calibrated to reference PBR color spaces and surface properties.
  */
 export function PlaceholderHouse({ visible = true }: PlaceholderHouseProps) {
   const setModelLoaded = useHouseStore((state) => state.setModelLoaded);
@@ -39,20 +39,20 @@ export function PlaceholderHouse({ visible = true }: PlaceholderHouseProps) {
 
   if (!visible) return null;
 
-  // Material Colors matching MATERIAL_SPEC.md neutral PBR placeholders
-  const colStucco = '#ecebe4';
-  const colTravertine = '#ddd6c8';
-  const colWalnut = '#5a3825';
-  const colWalnutDoor = '#6b4423';
-  const colGlass = '#e8f4f8';
-  const colMetalCharcoal = '#1f1f21';
-  const colSteel = '#c0c0c4';
-  const colPoolWater = '#38a3a5';
-  const colConcrete = '#8b8a85';
-  const colLandscape = '#8a795d';
-  const colVegetation = '#4d533c';
-  const colLEDCyan = '#00f0ff';
-  const colRoofGravel = '#9b9a95';
+  // Material Colors matching M4 Production Architectural Materials Spec
+  const colStucco = '#ecebe4';        // MAT_Wall_Main
+  const colTravertine = '#ddd6c8';    // MAT_Stone / MAT_Terrace
+  const colWalnut = '#5a3825';        // MAT_Wood_Interior
+  const colWalnutDoor = '#6b4423';    // MAT_Wood_Entrance
+  const colGlass = '#ffffff';         // MAT_Glass_Clear (Low-iron neutral)
+  const colMetalCharcoal = '#1f1f21'; // MAT_Metal_Dark
+  const colSteel = '#c0c0c4';         // MAT_Metal_Brushed
+  const colPoolWater = '#38a3a5';     // MAT_Water
+  const colConcrete = '#969288';      // MAT_Concrete
+  const colLandscape = '#7d6e58';     // MAT_Ground
+  const colVegetation = '#4d583f';    // MAT_Vegetation
+  const colLEDCyan = '#00f0ff';       // MAT_LED_Cyan
+  const colRoofGravel = '#8e8b82';    // MAT_Roof_Gravel
 
   const agavePositions: [number, number, number][] = [
     [-15.5, -0.6, 14.0],

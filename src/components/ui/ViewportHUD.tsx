@@ -4,18 +4,33 @@ import React from 'react';
 import { QualitySelector } from './QualitySelector';
 import { useHouseStore } from '@/3d/state/useHouseStore';
 import { REFERENCE_CAMERA_LIST, REFERENCE_CAMERAS } from '@/3d/camera/referenceCameras';
-import { Compass, Box, Video, Camera } from 'lucide-react';
+import { MaterialDisplayMode } from '@/3d/materials/types';
+import { Compass, Box, Video, Camera, Layers, Palette } from 'lucide-react';
+
+const MATERIAL_MODES: { id: MaterialDisplayMode; label: string }[] = [
+  { id: 'pbr', label: 'PBR' },
+  { id: 'clay', label: 'CLAY' },
+  { id: 'normals', label: 'NORMALS' },
+  { id: 'roughness', label: 'ROUGH' },
+  { id: 'metalness', label: 'METAL' },
+  { id: 'ids', label: 'MAT IDs' },
+];
 
 /**
- * Restrained architectural HUD overlay for M2 validation.
+ * Restrained architectural HUD overlay for M4 material validation.
  * Features hairline borders, coordinate readouts, quality tier management,
- * and an interactive reference camera switcher for instant keyframe verification.
+ * reference camera switcher, and material mode debug controls.
  */
 export function ViewportHUD() {
   const qualityTier = useHouseStore((state) => state.qualityTier);
   const currentZone = useHouseStore((state) => state.currentZone);
   const activeRefCamera = useHouseStore((state) => state.activeRefCamera);
   const setActiveRefCamera = useHouseStore((state) => state.setActiveRefCamera);
+
+  const materialMode = useHouseStore((state) => state.materialMode);
+  const setMaterialMode = useHouseStore((state) => state.setMaterialMode);
+  const showMaterialPreview = useHouseStore((state) => state.showMaterialPreview);
+  const setShowMaterialPreview = useHouseStore((state) => state.setShowMaterialPreview);
 
   const activeConfig = activeRefCamera ? REFERENCE_CAMERAS[activeRefCamera] : null;
 
@@ -28,10 +43,10 @@ export function ViewportHUD() {
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
             <span>SANTRO</span>
             <span className="text-neutral-500 font-normal">|</span>
-            <span className="text-neutral-300 font-normal">M3 ARCHITECTURAL DETAIL</span>
+            <span className="text-neutral-300 font-normal">M4 ARCHITECTURAL MATERIALS</span>
           </div>
           <span className="text-[10px] tracking-[0.15em] text-neutral-400 uppercase">
-            THE PORTFOLIO HOUSE • CINEMATIC REFERENCE RECONSTRUCTION
+            THE PORTFOLIO HOUSE • SURFACE REALISM & PBR MATERIAL SYSTEM
           </span>
         </div>
 
@@ -47,7 +62,7 @@ export function ViewportHUD() {
         <div className="hidden md:flex flex-col gap-1.5 text-[10px] text-neutral-400 bg-black/40 backdrop-blur-md border border-white/10 p-3 rounded shadow-lg max-w-sm">
           <div className="flex items-center gap-2 text-neutral-200">
             <Box size={12} className="text-cyan-400" />
-            <span>ARCHITECTURAL DETAIL: REFINED</span>
+            <span>SURFACE REALISM: PBR CALIBRATED</span>
           </div>
           <div className="flex items-center gap-2 text-[9px] text-neutral-400">
             <Compass size={12} />
@@ -84,10 +99,13 @@ export function ViewportHUD() {
               return (
                 <button
                   key={cam.id}
-                  onClick={() => setActiveRefCamera(cam.id)}
+                  onClick={() => {
+                    if (showMaterialPreview) setShowMaterialPreview(false);
+                    setActiveRefCamera(cam.id);
+                  }}
                   title={`${cam.name} (${cam.frameRef})`}
                   className={`px-2 py-1 text-[9px] rounded border transition-colors ${
-                    isActive
+                    isActive && !showMaterialPreview
                       ? 'bg-cyan-950/80 text-cyan-200 border-cyan-400/80 shadow-[0_0_8px_rgba(6,182,212,0.3)]'
                       : 'bg-white/5 text-neutral-400 border-white/5 hover:bg-white/10 hover:text-neutral-200'
                   }`}
@@ -96,6 +114,50 @@ export function ViewportHUD() {
                 </button>
               );
             })}
+          </div>
+        </div>
+
+        {/* M4 Material Display & Debug Toolbar (Section 30, 32, 39) */}
+        <div className="flex flex-col gap-1.5 bg-black/50 backdrop-blur-md border border-white/10 p-2.5 rounded shadow-lg">
+          <div className="flex items-center justify-between text-[9px] text-neutral-400 uppercase tracking-wider font-semibold">
+            <div className="flex items-center gap-1.5">
+              <Palette size={11} className="text-cyan-400" />
+              <span>MATERIAL INSPECTION & MODES</span>
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-1 max-w-xs md:max-w-md">
+            {MATERIAL_MODES.map((mode) => {
+              const isActive = materialMode === mode.id && !showMaterialPreview;
+              return (
+                <button
+                  key={mode.id}
+                  onClick={() => {
+                    if (showMaterialPreview) setShowMaterialPreview(false);
+                    setMaterialMode(mode.id);
+                  }}
+                  className={`px-2 py-1 text-[9px] rounded border transition-colors ${
+                    isActive
+                      ? 'bg-cyan-950/80 text-cyan-200 border-cyan-400/80 shadow-[0_0_8px_rgba(6,182,212,0.3)]'
+                      : 'bg-white/5 text-neutral-400 border-white/5 hover:bg-white/10 hover:text-neutral-200'
+                  }`}
+                >
+                  {mode.label}
+                </button>
+              );
+            })}
+
+            {/* Studio Swatch Preview Toggle (Section 30) */}
+            <button
+              onClick={() => setShowMaterialPreview(!showMaterialPreview)}
+              className={`px-2 py-1 text-[9px] rounded border transition-colors flex items-center gap-1 ${
+                showMaterialPreview
+                  ? 'bg-emerald-950/80 text-emerald-200 border-emerald-400/80 shadow-[0_0_8px_rgba(52,211,153,0.3)]'
+                  : 'bg-white/5 text-neutral-400 border-white/5 hover:bg-white/10 hover:text-neutral-200'
+              }`}
+            >
+              <Layers size={10} />
+              <span>STUDIO SWATCHES</span>
+            </button>
           </div>
         </div>
       </div>
@@ -108,6 +170,9 @@ export function ViewportHUD() {
           <span className="text-neutral-600">•</span>
           <span className="text-neutral-500">TIER:</span>
           <span className="text-neutral-200 uppercase">{qualityTier}</span>
+          <span className="text-neutral-600">•</span>
+          <span className="text-neutral-500">MAT:</span>
+          <span className="text-cyan-300 uppercase">{showMaterialPreview ? 'STUDIO SWATCHES' : materialMode}</span>
         </div>
 
         <div className="text-[10px] tracking-wider text-neutral-400 uppercase text-right">

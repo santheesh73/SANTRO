@@ -21,22 +21,28 @@ export function CameraController({ enableControls = true }: CameraControllerProp
   const { camera } = useThree();
   const activeRefCamera = useHouseStore((state) => state.activeRefCamera);
   const cameraTransitionNonce = useHouseStore((state) => state.cameraTransitionNonce);
+  const showMaterialPreview = useHouseStore((state) => state.showMaterialPreview);
 
   const targetPosRef = useRef<THREE.Vector3>(new THREE.Vector3(4.2, 12.5, 26.0));
   const targetLookAtRef = useRef<THREE.Vector3>(new THREE.Vector3(0.0, 3.8, 2.0));
   const targetFovRef = useRef<number>(48);
   const isTransitioningRef = useRef<boolean>(true);
 
-  // When active reference camera selection changes or transition is triggered, set new targets
+  // When active reference camera selection changes, preview toggles, or transition is triggered, set new targets
   useEffect(() => {
-    if (activeRefCamera && REFERENCE_CAMERAS[activeRefCamera]) {
+    if (showMaterialPreview) {
+      targetPosRef.current.set(0.0, 9.5, 18.0);
+      targetLookAtRef.current.set(0.0, 1.0, 2.25);
+      targetFovRef.current = 46;
+      isTransitioningRef.current = true;
+    } else if (activeRefCamera && REFERENCE_CAMERAS[activeRefCamera]) {
       const cfg = REFERENCE_CAMERAS[activeRefCamera];
       targetPosRef.current.set(cfg.position[0], cfg.position[1], cfg.position[2]);
       targetLookAtRef.current.set(cfg.target[0], cfg.target[1], cfg.target[2]);
       targetFovRef.current = cfg.fov;
       isTransitioningRef.current = true;
     }
-  }, [activeRefCamera, cameraTransitionNonce]);
+  }, [showMaterialPreview, activeRefCamera, cameraTransitionNonce]);
 
   useFrame((_, delta) => {
     if (!isTransitioningRef.current) return;
