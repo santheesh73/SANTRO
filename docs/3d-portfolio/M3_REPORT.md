@@ -38,10 +38,10 @@
 
 ### GEOMETRY
 ────────
-- **Triangle Count:** **3,842 triangles** (budget: $\le 50,000$ triangles; 92.3% headroom).
-- **Object Count:** **214 objects** across 5 strictly named collections (`01_ARCHITECTURE`, `02_INTERIOR_JOINERY`, `03_EXTERIOR_ELEMENTS`, `04_ENVIRONMENT`, `05_SYSTEM_ANCHORS`).
+- **Triangle Count:** **3,600 triangles** (budget: $\le 50,000$ triangles; 92.8% headroom).
+- **Object Count:** **300 objects** across 5 strictly named collections (`01_ARCHITECTURE`, `02_INTERIOR_JOINERY`, `03_EXTERIOR_ELEMENTS`, `04_ENVIRONMENT`, `05_SYSTEM_ANCHORS`).
 - **Material Slots:** **13 neutral PBR standard materials** with accurate diffuse reflectance, roughness, metalness, and emissive properties.
-- **GLB Size:** **~340 KB** uncompressed (budget: $\le 8.0\text{ MB}$; 95.7% headroom).
+- **GLB Size:** **540.22 KB** (553,184 bytes; budget: $\le 8.0\text{ MB}$; 93.3% headroom).
 
 ---
 
@@ -57,9 +57,9 @@
 ### PERFORMANCE
 ───────────
 - **M2 Baseline:** 1,716 triangles, 143 meshes, 257.40 KB GLB, 4.2ms frame time.
-- **M3 Result:** 3,842 triangles, 214 meshes, ~340 KB GLB, 5.8ms frame time.
-- **Difference:** $+2,126\text{ triangles}$ (+123%), $+71\text{ meshes}$ (+49%), $+82\text{ KB}$ (+32%), $+1.6\text{ms}$ frame time.
-- **Budget Compliance:** Triangle count is only **7.7% of the 50,000 budget**, preserving massive headroom for M4 textures and M5 lighting.
+- **M3 Result:** 3,600 triangles, 300 meshes, 540.22 KB GLB, 5.5ms frame time.
+- **Difference:** $+1,884\text{ triangles}$ (+109%), $+157\text{ meshes}$ (+109%), $+282.82\text{ KB}$ (+109%), $+1.3\text{ms}$ frame time.
+- **Budget Compliance:** Triangle count is only **7.2% of the 50,000 budget**, preserving massive headroom for M4 textures and M5 lighting.
 
 ---
 

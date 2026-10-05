@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import * as THREE from 'three';
 import { useHouseStore } from '@/3d/state/useHouseStore';
 
 interface PlaceholderHouseProps {
@@ -751,6 +750,16 @@ export function PlaceholderHouse({ visible = true }: PlaceholderHouseProps) {
         <mesh name="ENV_Rear_Mountain_Horizon" position={[0, 4.0, -60.0]}>
           <boxGeometry args={[120.0, 12.0, 8.0]} />
           <meshStandardMaterial color={colLandscape} roughness={0.9} />
+        </mesh>
+
+        {/* Agave Succulent Clusters */}
+        <mesh name="ENV_Agave_Cluster_01" position={[-15.5, -0.6, 14.0]}>
+          <boxGeometry args={[1.2, 0.7, 1.2]} />
+          <meshStandardMaterial color={colVegetation} roughness={0.85} />
+        </mesh>
+        <mesh name="ENV_Agave_Cluster_02" position={[-8.0, -1.2, 16.0]}>
+          <boxGeometry args={[1.2, 0.7, 1.2]} />
+          <meshStandardMaterial color={colVegetation} roughness={0.85} />
         </mesh>
       </group>
 

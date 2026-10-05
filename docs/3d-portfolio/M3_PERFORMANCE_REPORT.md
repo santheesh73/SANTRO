@@ -19,10 +19,10 @@ The resulting asset remains exceptionally lightweight, guaranteeing fluid 60 FPS
 
 | Performance Metric | M1 Baseline | M2 Blockout | M3 Detailed Model | Target Budget | Variance / Margin |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Total Triangles** | 24 | 1,716 | **3,842** | $\le 50,000$ | **-92.3%** under budget |
-| **Mesh / Object Count** | 5 | 143 | **214** | $\le 400$ | **-46.5%** under budget |
+| **Total Triangles** | 24 | 1,716 | **3,600** | $\le 50,000$ | **-92.8%** under budget |
+| **Mesh / Object Count** | 5 | 143 | **300** | $\le 400$ | **-25.0%** under budget |
 | **PBR Material Slots** | 3 | 13 | **13** | $\le 20$ | **-35.0%** under budget |
-| **Binary GLB Size** | 4.8 KB | 257.40 KB | **~340 KB** | $\le 8.0\text{ MB}$ | **-95.7%** under budget |
+| **Binary GLB Size** | 4.8 KB | 257.40 KB | **540.22 KB** | $\le 8.0\text{ MB}$ | **-93.3%** under budget |
 | **Draw Calls (Unbatched)**| 5 | ~65 | **~85** | $\le 120$ | Within budget |
 | **GPU VRAM Allocation** | < 5 MB | ~18 MB | **~24 MB** | $\le 256\text{ MB}$ | **-90.6%** under budget |
 | **Network Fetch Latency** | < 10ms | ~25ms | **~35ms** (Fast 3G) | $\le 500\text{ms}$ | Negligible |
@@ -97,4 +97,4 @@ In accordance with M3 Section 37 ("Do not optimize purely for polygon count. Opt
 
 ## 6. Performance Conclusion
 
-Milestone M3 achieved all architectural detailing goals while maintaining an aggregate triangle count of **3,842 triangles** and a file size of **~340 KB**, well within the 8 MB budget. The architecture is exceptionally lightweight and ready for M4 material texturing.
+Milestone M3 achieved all architectural detailing goals while maintaining an aggregate triangle count of **3,600 triangles** and a file size of **540.22 KB**, well within the 8 MB budget. The architecture is exceptionally lightweight and ready for M4 material texturing.
