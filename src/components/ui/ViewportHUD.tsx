@@ -28,7 +28,7 @@ export function ViewportHUD() {
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
             <span>SANTRO</span>
             <span className="text-neutral-500 font-normal">|</span>
-            <span className="text-neutral-300 font-normal">M2 ARCHITECTURAL BLOCKOUT</span>
+            <span className="text-neutral-300 font-normal">M3 ARCHITECTURAL DETAIL</span>
           </div>
           <span className="text-[10px] tracking-[0.15em] text-neutral-400 uppercase">
             THE PORTFOLIO HOUSE • CINEMATIC REFERENCE RECONSTRUCTION
@@ -47,7 +47,7 @@ export function ViewportHUD() {
         <div className="hidden md:flex flex-col gap-1.5 text-[10px] text-neutral-400 bg-black/40 backdrop-blur-md border border-white/10 p-3 rounded shadow-lg max-w-sm">
           <div className="flex items-center gap-2 text-neutral-200">
             <Box size={12} className="text-cyan-400" />
-            <span>ARCHITECTURAL BLOCKOUT: VERIFIED</span>
+            <span>ARCHITECTURAL DETAIL: REFINED</span>
           </div>
           <div className="flex items-center gap-2 text-[9px] text-neutral-400">
             <Compass size={12} />
