@@ -5,6 +5,7 @@
   "description": "SANTRO — Cinematic 3D Architectural Web Portfolio for Santheesh S",
   "author": "Santheesh S <santheesh73@gmail.com>",
   "scripts": {
+    "prebuild": "node scripts/generate-portfolio-house-glb.mjs && node scripts/verify-assets.mjs",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",

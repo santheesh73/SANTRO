@@ -359,6 +359,7 @@ async function generatePortfolioHouseGLB() {
   );
 
   // Continuous Parapet Coping Capping Profiles with crisp 30mm overhangs
+  // Front and rear run full width; West and East abut between them cleanly (zero corner coplanar overlap)
   colArchitecture.add(
     createBox('HOUSE_Roof_Coping_Front', [32.5, 0.06, 0.38], [0, 8.08, +4.0], matMetalCharcoal)
   );
@@ -366,10 +367,10 @@ async function generatePortfolioHouseGLB() {
     createBox('HOUSE_Roof_Coping_Rear', [32.5, 0.06, 0.38], [0, 8.08, -22.4], matMetalCharcoal)
   );
   colArchitecture.add(
-    createBox('HOUSE_Roof_Coping_West', [0.38, 0.06, 26.5], [-16.05, 8.08, -9.2], matMetalCharcoal)
+    createBox('HOUSE_Roof_Coping_West', [0.38, 0.06, 26.02], [-16.05, 8.08, -9.2], matMetalCharcoal)
   );
   colArchitecture.add(
-    createBox('HOUSE_Roof_Coping_East', [0.38, 0.06, 26.5], [+16.05, 8.08, -9.2], matMetalCharcoal)
+    createBox('HOUSE_Roof_Coping_East', [0.38, 0.06, 26.02], [+16.05, 8.08, -9.2], matMetalCharcoal)
   );
 
   // Gravel Ballast Deck Surface
@@ -918,14 +919,16 @@ async function generatePortfolioHouseGLB() {
   );
 
   // Pool Perimeter Honed Travertine Coping Slabs with 50mm Architectural Nosing Overhang
+  // North coping spans X: -15.95 to -1.65, Z: +7.175 to +7.525.
+  // West and East coping run from Z: +7.525 to +11.7 (length 4.175, center Z = +9.6125) with zero corner overlap.
   colExterior.add(
     createBox('EXT_Infinity_Pool_Coping_North', [14.3, 0.08, 0.35], [-8.8, 0.04, +7.35], matTravertineFloor)
   );
   colExterior.add(
-    createBox('EXT_Infinity_Pool_Coping_West', [0.35, 0.08, 4.2], [-15.85, 0.04, +9.6], matTravertineFloor)
+    createBox('EXT_Infinity_Pool_Coping_West', [0.35, 0.08, 4.175], [-15.85, 0.04, +9.6125], matTravertineFloor)
   );
   colExterior.add(
-    createBox('EXT_Infinity_Pool_Coping_East', [0.35, 0.08, 4.2], [-1.75, 0.04, +9.6], matTravertineFloor)
+    createBox('EXT_Infinity_Pool_Coping_East', [0.35, 0.08, 4.175], [-1.75, 0.04, +9.6125], matTravertineFloor)
   );
 
   // Infinity vanishing overflow weir edge on south face (Z = +11.7m)

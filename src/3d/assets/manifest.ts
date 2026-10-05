@@ -41,7 +41,7 @@ export const ASSET_MANIFEST: Record<string, AssetManifestEntry> = {
     status: 'AVAILABLE',
     optimizationStatus: 'UNCOMPRESSED',
     expectedMilestone: 'M3',
-    fileSizeBytes: 553184,
+    fileSizeBytes: 553240,
     triangleBudget: 3600,
   },
   entrance_pivot_door: {
