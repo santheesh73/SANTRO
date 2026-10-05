@@ -3,6 +3,7 @@ import { QualityTier, SpatialZone } from '@/types';
 import { detectDefaultQualityTier } from '@/3d/utils/quality';
 import { ReferenceCameraId } from '@/3d/camera/referenceCameras';
 import { MaterialDisplayMode } from '@/3d/materials/types';
+import { TimeOfDayPreset, LightingDebugSolo } from '@/3d/lighting/types';
 
 export type CameraMode = 'spline' | 'inspect' | 'free';
 
@@ -24,6 +25,10 @@ export interface HouseState {
   materialMode: MaterialDisplayMode;
   showMaterialPreview: boolean;
 
+  // M5 Lighting & Atmosphere State
+  timeOfDay: TimeOfDayPreset;
+  lightingDebugSolo: LightingDebugSolo;
+
   // Interactive Project Modal
   activeProjectId: string | null;
   isModalOpen: boolean;
@@ -44,6 +49,8 @@ export interface HouseState {
   exitInspectMode: () => void;
   setMaterialMode: (mode: MaterialDisplayMode) => void;
   setShowMaterialPreview: (show: boolean) => void;
+  setTimeOfDay: (tod: TimeOfDayPreset) => void;
+  setLightingDebugSolo: (mode: LightingDebugSolo) => void;
   openProjectModal: (projectId: string) => void;
   closeProjectModal: () => void;
   setDoorAngle: (angle: number) => void;
@@ -69,6 +76,9 @@ export const useHouseStore = create<HouseState>((set) => ({
 
   materialMode: 'pbr',
   showMaterialPreview: false,
+
+  timeOfDay: 'golden_hour',
+  lightingDebugSolo: 'all',
 
   activeProjectId: null,
   isModalOpen: false,
@@ -116,6 +126,16 @@ export const useHouseStore = create<HouseState>((set) => ({
   setShowMaterialPreview: (show) =>
     set({
       showMaterialPreview: show,
+    }),
+
+  setTimeOfDay: (tod) =>
+    set({
+      timeOfDay: tod,
+    }),
+
+  setLightingDebugSolo: (mode) =>
+    set({
+      lightingDebugSolo: mode,
     }),
 
   openProjectModal: (projectId) =>
