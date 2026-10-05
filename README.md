@@ -18,8 +18,8 @@
 
 <br><br>
 
-[![Status: M0 Baseline Complete](https://img.shields.io/badge/Status-M0%20Baseline%20Complete-emerald?style=flat-square)](docs/3d-portfolio/M0_REPORT.md)
-[![Next Milestone: M1 Pipeline](https://img.shields.io/badge/Next-M1%203D%20Asset%20Pipeline-blue?style=flat-square)](docs/3d-portfolio/MILESTONE_ROADMAP.md)
+[![Status: M1 Foundation Complete](https://img.shields.io/badge/Status-M1%20Foundation%20Complete-emerald?style=flat-square)](docs/3d-portfolio/M1_REPORT.md)
+[![Next Milestone: M2 House Blockout](https://img.shields.io/badge/Next-M2%20House%20Blockout-blue?style=flat-square)](docs/3d-portfolio/MILESTONE_ROADMAP.md)
 [![Tech Stack: Next.js 16 | React 19 | Three.js | R3F](https://img.shields.io/badge/Stack-Next.js%2016%20%7C%20React%2019%20%7C%20R3F-purple?style=flat-square)](docs/3d-portfolio/M0_BASELINE.md)
 
 </div>
@@ -82,6 +82,12 @@ Milestone **M0** establishes the definitive technical foundation. All specificat
 | **[`SCENE_ARCHITECTURE.md`](docs/3d-portfolio/SCENE_ARCHITECTURE.md)** | React Three Fiber scene graph (`<HouseExperience>`), Zustand store (`useHouseStore`), lighting/shadows, and device tiers. |
 | **[`MILESTONE_ROADMAP.md`](docs/3d-portfolio/MILESTONE_ROADMAP.md)** | Strict sequential dependency graph (DAG) and granular specifications for milestones M0 through M16. |
 | **[`M0_REPORT.md`](docs/3d-portfolio/M0_REPORT.md)** | Final milestone verification report and formal sign-off for Milestone M1 commencement. |
+| **[`M1_IMPLEMENTATION.md`](docs/3d-portfolio/M1_IMPLEMENTATION.md)** | Technical foundation implementation, Canvas setup, placeholder scene, and state integration. |
+| **[`3D_PIPELINE.md`](docs/3d-portfolio/3D_PIPELINE.md)** | End-to-end 3D asset pipeline from Blender to web delivery via `@gltf-transform`. |
+| **[`BLENDER_CONVENTIONS.md`](docs/3d-portfolio/BLENDER_CONVENTIONS.md)** | Strict modeling conventions, collection hierarchy, naming, pivots, materials, and units. |
+| **[`WEBGL_PERFORMANCE.md`](docs/3d-portfolio/WEBGL_PERFORMANCE.md)** | Performance budgets, clamped DPR strategy, shadow map limits, quality tiers, and GPU disposal. |
+| **[`ASSET_MANIFEST.md`](docs/3d-portfolio/ASSET_MANIFEST.md)** | Centralized asset manifest tracking paths, types, statuses, milestones, and budgets. |
+| **[`M1_REPORT.md`](docs/3d-portfolio/M1_REPORT.md)** | Final M1 milestone completion report and formal sign-off for Milestone M2 commencement. |
 
 ---
 
@@ -170,8 +176,9 @@ santheesh73/SANTRO/
 
 ```text
 M0 STATUS: COMPLETE
+M1 STATUS: COMPLETE
 
 NEXT MILESTONE:
-M1 — 3D Asset Pipeline & Tooling
+M2 — House Blockout & Architectural Reconstruction
 ```
->>>>>>> d4974cf (docs(m0): complete project baseline, reference analysis, and architectural specifications)
+
