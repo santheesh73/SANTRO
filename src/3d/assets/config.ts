@@ -12,6 +12,15 @@ export function getAssetEntry(id: string): AssetManifestEntry {
 }
 
 /**
+ * Master architectural model ID and default resolver for M2+
+ */
+export const MASTER_HOUSE_MODEL_ID = 'the_portfolio_house';
+
+export function getDefaultHouseModelUrl(): string | null {
+  return resolveAssetUrl(MASTER_HOUSE_MODEL_ID);
+}
+
+/**
  * Resolves the URL for an asset. If the asset is procedural or unavailable without
  * a static web fallback, returns null to signal procedural rendering.
  */

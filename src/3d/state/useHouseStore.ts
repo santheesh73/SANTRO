@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { QualityTier, SpatialZone } from '@/types';
 import { detectDefaultQualityTier } from '@/3d/utils/quality';
+import { ReferenceCameraId } from '@/3d/camera/referenceCameras';
 
 export type CameraMode = 'spline' | 'inspect' | 'free';
 
@@ -12,6 +13,8 @@ export interface HouseState {
 
   // Camera & Interaction
   cameraMode: CameraMode;
+  activeRefCamera: ReferenceCameraId | null;
+  cameraTransitionNonce: number;
   inspectTargetId: string | null;
   isDoorOpen: boolean;
   doorAngle: number; // in radians: 0.0 to -1.48 (~ -85 deg)
@@ -31,6 +34,7 @@ export interface HouseState {
   // Actions
   setScrollProgress: (progress: number) => void;
   navigateToZone: (zone: SpatialZone) => void;
+  setActiveRefCamera: (camId: ReferenceCameraId | null) => void;
   enterInspectMode: (targetId: string) => void;
   exitInspectMode: () => void;
   openProjectModal: (projectId: string) => void;
@@ -50,6 +54,8 @@ export const useHouseStore = create<HouseState>((set) => ({
   currentZone: 'EXTERIOR',
 
   cameraMode: 'free',
+  activeRefCamera: 'exterior',
+  cameraTransitionNonce: 0,
   inspectTargetId: null,
   isDoorOpen: false,
   doorAngle: 0.0,
@@ -73,6 +79,12 @@ export const useHouseStore = create<HouseState>((set) => ({
     set({
       currentZone: zone,
     }),
+
+  setActiveRefCamera: (camId) =>
+    set((state) => ({
+      activeRefCamera: camId,
+      cameraTransitionNonce: state.cameraTransitionNonce + 1,
+    })),
 
   enterInspectMode: (targetId) =>
     set({

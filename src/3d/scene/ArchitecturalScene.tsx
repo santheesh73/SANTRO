@@ -7,6 +7,7 @@ import { SceneLighting } from '@/3d/lighting/SceneLighting';
 import { Atmosphere } from '@/3d/environment/Atmosphere';
 import { PlaceholderHouse } from '@/3d/scene/PlaceholderHouse';
 import { ModelLoader } from '@/3d/loaders/ModelLoader';
+import { getDefaultHouseModelUrl } from '@/3d/assets/config';
 
 interface ArchitecturalSceneProps {
   modelUrl?: string | null;
@@ -16,18 +17,21 @@ interface ArchitecturalSceneProps {
 /**
  * Architectural 3D Scene Root.
  * Orchestrates camera, lighting, atmosphere, and architectural geometry.
- * Gracefully renders either an external GLB model via ModelLoader or the procedural PlaceholderHouse.
+ * Loads the master architectural model 'the_portfolio_house' via ModelLoader,
+ * with graceful fallback to the procedural PlaceholderHouse.
  */
 export function ArchitecturalScene({
-  modelUrl = null,
+  modelUrl = getDefaultHouseModelUrl(),
   enableControls = true,
 }: ArchitecturalSceneProps) {
+  const resolvedUrl = modelUrl ?? getDefaultHouseModelUrl();
+
   return (
     <>
       {/* 1. Architectural Perspective Camera */}
       <PerspectiveCamera />
 
-      {/* 2. Damped Inspection Camera Controls */}
+      {/* 2. Damped Inspection Camera Controls with Reference View Transitions */}
       <CameraController enableControls={enableControls} />
 
       {/* 3. Atmospheric Sky & Ground Horizon */}
@@ -36,11 +40,11 @@ export function ArchitecturalScene({
       {/* 4. Directional Sun & Ambient Lighting */}
       <SceneLighting />
 
-      {/* 5. Architectural Geometry: External GLB Model or Metric Placeholder */}
+      {/* 5. Architectural Geometry: Master Reconstructed House Model or Fallback */}
       <Suspense fallback={<PlaceholderHouse />}>
-        {modelUrl ? (
+        {resolvedUrl ? (
           <ModelLoader
-            url={modelUrl}
+            url={resolvedUrl}
             fallback={<PlaceholderHouse />}
           />
         ) : (

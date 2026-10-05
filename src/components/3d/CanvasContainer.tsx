@@ -6,6 +6,7 @@ import { Canvas } from '@react-three/fiber';
 import { useHouseStore } from '@/3d/state/useHouseStore';
 import { QUALITY_CONFIGS } from '@/3d/utils/quality';
 import { checkWebGLSupport, WebGLSupportStatus } from '@/3d/utils/webgl';
+import { getDefaultHouseModelUrl } from '@/3d/assets/config';
 import { ArchitecturalScene } from '@/3d/scene/ArchitecturalScene';
 import { ErrorBoundary3D } from './ErrorBoundary3D';
 import { WebGLFallback } from './WebGLFallback';
@@ -22,7 +23,7 @@ interface CanvasContainerProps {
  * PCF soft shadows, and graceful fallback handling.
  */
 export function CanvasContainer({
-  modelUrl = null,
+  modelUrl = getDefaultHouseModelUrl(),
   enableControls = true,
 }: CanvasContainerProps) {
   const qualityTier = useHouseStore((state) => state.qualityTier);

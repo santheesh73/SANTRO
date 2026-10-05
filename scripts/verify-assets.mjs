@@ -50,8 +50,28 @@ function verifyAssets() {
     console.log(`  • File Size: ${(stats.size / 1024).toFixed(2)} KB (Budget: 500 KB)`);
     console.log(`  • Within Budget: ${withinBudget ? 'PASS' : 'FAIL'}`);
     if (!withinBudget) allPass = false;
+  }
+
+  // Check the master architectural model: the_portfolio_house.glb
+  const houseModelPath = path.resolve(process.cwd(), 'public/3d/models/the_portfolio_house.glb');
+  if (fs.existsSync(houseModelPath)) {
+    const stats = fs.statSync(houseModelPath);
+    const buffer = fs.readFileSync(houseModelPath);
+    const magic = buffer.readUInt32LE(0);
+    const version = buffer.readUInt32LE(4);
+
+    const isGLB = magic === 0x46546c67 && version === 2;
+    const withinBudget = stats.size <= PERFORMANCE_BUDGETS.maxHouseSize;
+
+    console.log(`[Asset Checked] ${path.relative(process.cwd(), houseModelPath)}`);
+    console.log(`  • Valid glTF 2.0 Header: ${isGLB ? 'PASS' : 'FAIL'}`);
+    console.log(`  • File Size: ${(stats.size / 1024).toFixed(2)} KB (Budget: ${(PERFORMANCE_BUDGETS.maxHouseSize / (1024 * 1024)).toFixed(0)} MB)`);
+    console.log(`  • Within Budget: ${withinBudget ? 'PASS' : 'FAIL'}`);
+
+    if (!isGLB || !withinBudget) allPass = false;
   } else {
-    console.log('[Notice] Procedural placeholder active. External house asset scheduled for M2.');
+    console.log('[Notice] External house model the_portfolio_house.glb missing.');
+    allPass = false;
   }
 
   // Verify directory structure
