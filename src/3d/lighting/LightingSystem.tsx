@@ -51,9 +51,33 @@ function ToneMappingExposureController({ exposure }: { exposure: number }) {
 export function LightingSystem() {
   const timeOfDay = useHouseStore((state) => state.timeOfDay);
   const lightingDebugSolo = useHouseStore((state) => state.lightingDebugSolo);
+  const interiorFactor = useHouseStore((state) => state.interiorFactor ?? 0.0);
 
   // Active preset (Day, Golden Hour, Dusk, Interior)
   const preset = LIGHTING_PRESETS[timeOfDay] ?? LIGHTING_PRESETS.golden_hour;
+
+  // Subtle ocular iris adaptation: +0.10 exposure boost when inside foyer / corridor / atrium
+  const adaptedExposure = preset.exposure + interiorFactor * 0.10;
+
+  // Gentle exterior sun reduction when inside (prevents harsh glare on interior surfaces)
+  const adaptedSun = React.useMemo(() => {
+    if (interiorFactor <= 0.01) return preset.sun;
+    return {
+      ...preset.sun,
+      intensity: preset.sun.intensity * (1.0 - 0.20 * interiorFactor),
+    };
+  }, [preset.sun, interiorFactor]);
+
+  // Enhanced interior practical dominance as camera penetrates interior spaces
+  const adaptedInterior = React.useMemo(() => {
+    if (interiorFactor <= 0.01) return preset.interior;
+    return {
+      ...preset.interior,
+      corridorDownlightIntensity: preset.interior.corridorDownlightIntensity * (1.0 + 0.15 * interiorFactor),
+      workspaceLinearIntensity: preset.interior.workspaceLinearIntensity * (1.0 + 0.15 * interiorFactor),
+      atriumCoveIntensity: preset.interior.atriumCoveIntensity * (1.0 + 0.15 * interiorFactor),
+    };
+  }, [preset.interior, interiorFactor]);
 
   const showSun =
     lightingDebugSolo === 'all' || lightingDebugSolo === 'sun_only';
@@ -76,10 +100,10 @@ export function LightingSystem() {
   return (
     <group name="LightingSystem_Master">
       {/* 1. ACES Filmic Tone Mapping Exposure Synchronization & Smooth Iris Damping */}
-      <ToneMappingExposureController exposure={preset.exposure} />
+      <ToneMappingExposureController exposure={adaptedExposure} />
 
       {/* 2. Primary Directional Sunlight & Shadows */}
-      {showSun && <SunLight config={preset.sun} />}
+      {showSun && <SunLight config={adaptedSun} />}
 
       {/* 3. Environmental Fill (Hemisphere + Ambient) */}
       {showEnv && <EnvironmentLight config={preset.environment} />}
@@ -88,7 +112,7 @@ export function LightingSystem() {
       {showEntrance && <EntranceLights config={preset.entrance} />}
 
       {/* 5. Interior Practical Downlights, Coves, and Plinth Lighting */}
-      {showInterior && <InteriorLights config={preset.interior} />}
+      {showInterior && <InteriorLights config={adaptedInterior} />}
 
       {/* 6. Infinity Lap Pool Underwater & Weir Edge Lighting */}
       {showPool && <PoolLighting config={preset.pool} />}

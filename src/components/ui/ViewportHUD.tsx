@@ -91,10 +91,10 @@ export function ViewportHUD() {
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
             <span>SANTRO</span>
             <span className="text-neutral-500 font-normal">|</span>
-            <span className="text-neutral-300 font-normal">M6 EXTERIOR CINEMATIC CAMERA JOURNEY</span>
+            <span className="text-neutral-300 font-normal">M7 CONTINUOUS CINEMATIC CAMERA JOURNEY</span>
           </div>
           <span className="text-[10px] tracking-[0.15em] text-neutral-400 uppercase">
-            THE PORTFOLIO HOUSE • AERIAL ESTABLISHING, POOL APPROACH & ENTRANCE THRESHOLD
+            THE PORTFOLIO HOUSE • EXTERIOR APPROACH, DOOR THRESHOLD, FOYER & ATRIUM CORE
           </span>
         </div>
 
@@ -109,12 +109,12 @@ export function ViewportHUD() {
         data-prevent-scroll
         className="flex flex-col gap-2.5 self-start pointer-events-auto max-h-[82vh] overflow-y-auto pr-2"
       >
-        {/* M6 Exterior Cinematic Camera Scrubber & Validation Toolbar */}
-        <div className="flex flex-col gap-2 bg-black/60 backdrop-blur-md border border-cyan-500/30 p-3 rounded shadow-xl max-w-sm md:max-w-md">
+        {/* M6/M7 Continuous Cinematic Camera Scrubber & Validation Toolbar */}
+        <div className="flex flex-col gap-2 bg-black/60 backdrop-blur-md border border-cyan-500/30 p-3 rounded shadow-xl max-w-sm md:max-w-lg">
           <div className="flex items-center justify-between text-[10px] text-neutral-300 font-semibold tracking-wider uppercase">
             <div className="flex items-center gap-1.5 text-cyan-400">
               <Play size={12} className="fill-cyan-400" />
-              <span>EXTERIOR CINEMATIC JOURNEY</span>
+              <span>CONTINUOUS ARCHITECTURAL JOURNEY</span>
             </div>
             <span className="text-cyan-300 font-bold">
               {(cinematicProgress * 100).toFixed(1)}%
@@ -146,20 +146,20 @@ export function ViewportHUD() {
             />
             <div className="flex justify-between text-[8px] text-neutral-500">
               <span>0% ESTABLISHING</span>
-              <span>48% POOL</span>
-              <span>100% DOOR</span>
+              <span>50% THRESHOLD</span>
+              <span>100% ATRIUM</span>
             </div>
           </div>
 
-          {/* 5 Calibrated Validation Shots Selector */}
+          {/* 9 Calibrated Validation Shots Selector */}
           <div className="flex flex-col gap-1 mt-1">
             <span className="text-[8px] text-neutral-400 tracking-wider uppercase font-semibold">
-              CALIBRATED VALIDATION SHOTS (M6 §32)
+              CALIBRATED VALIDATION SHOTS (M6 §32 & M7 §41)
             </span>
-            <div className="grid grid-cols-5 gap-1">
+            <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-9 gap-1">
               {VALIDATION_SHOT_LIST.map((shot) => {
                 const isActive =
-                  Math.abs(cinematicProgress - shot.progress) < 0.08 ||
+                  Math.abs(cinematicProgress - shot.progress) < 0.05 ||
                   activeValidationShotId === shot.id;
                 return (
                   <button
@@ -171,14 +171,14 @@ export function ViewportHUD() {
                       setTargetProgress(shot.progress);
                     }}
                     title={`${shot.name} (${shot.frameRef}) — ${shot.description}`}
-                    className={`py-1 text-[8px] font-semibold rounded border transition-colors flex flex-col items-center ${
+                    className={`py-1 px-0.5 text-[8px] font-semibold rounded border transition-colors flex flex-col items-center ${
                       isActive
                         ? 'bg-cyan-950/80 text-cyan-200 border-cyan-400/80 shadow-[0_0_8px_rgba(6,182,212,0.3)]'
                         : 'bg-white/5 text-neutral-400 border-white/5 hover:bg-white/10 hover:text-neutral-200'
                     }`}
                   >
                     <span>SHOT 0{shot.shotNumber}</span>
-                    <span className="text-[7px] font-normal text-neutral-400 truncate max-w-[50px]">
+                    <span className="text-[6.5px] font-normal text-neutral-400 truncate max-w-[44px]">
                       {shot.name.split(' ')[0]}
                     </span>
                   </button>

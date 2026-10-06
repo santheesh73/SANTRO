@@ -10,14 +10,15 @@ import { REFERENCE_CAMERAS } from './referenceCameras';
 import { CAMERA_CONFIG } from './CameraConfig';
 import { CameraRig } from './CameraRig';
 import {
-  evaluateCameraPosition,
-  evaluateCameraTarget,
-  evaluateCameraFov,
-  getStateAtProgress,
-} from './exteriorCameraPath';
+  evaluateUnifiedPosition,
+  evaluateUnifiedTarget,
+  evaluateUnifiedFov,
+  getUnifiedStateAtProgress,
+  evaluateInteriorTransitionFactor,
+} from './CameraPath';
 import { getDampingFactor } from './CameraInterpolation';
 import { useCameraInput } from './useCameraInput';
-import { ExteriorCameraState } from './types';
+import { CameraJourneyState } from './types';
 
 interface CameraControllerProps {
   enableControls?: boolean;
@@ -56,6 +57,7 @@ export function CameraController({ enableControls = true }: CameraControllerProp
   const cameraTransitionNonce = useHouseStore((state) => state.cameraTransitionNonce);
   const showMaterialPreview = useHouseStore((state) => state.showMaterialPreview);
   const setExteriorCameraState = useHouseStore((state) => state.setExteriorCameraState);
+  const setInteriorFactor = useHouseStore((state) => state.setInteriorFactor);
   const setCinematicProgress = useHouseStore((state) => state.setCinematicProgress);
 
   // Transition targets for reference/inspect modes
@@ -67,8 +69,9 @@ export function CameraController({ enableControls = true }: CameraControllerProp
   // Internal smoothed progress value and throttle references
   const currentProgressRef = useRef<number>(0.0);
   const lastStoreProgressRef = useRef<number>(0.0);
+  const lastInteriorFactorRef = useRef<number>(0.0);
   const wasSettledRef = useRef<boolean>(false);
-  const prevStateRef = useRef<ExteriorCameraState>('EXTERIOR_ESTABLISHING');
+  const prevStateRef = useRef<CameraJourneyState>('EXTERIOR_ESTABLISHING');
   const clockRef = useRef<number>(0.0);
 
   // Listen to reference camera selections or preview toggles
@@ -130,7 +133,7 @@ export function CameraController({ enableControls = true }: CameraControllerProp
     }
 
     // =========================================================================
-    // MODE 2: CINEMATIC SPLINE PROGRESSION (Default Architectural Journey)
+    // MODE 2: CINEMATIC SPLINE PROGRESSION (Unified Architectural Journey)
     // =========================================================================
     if (cameraMode === 'cinematic') {
       const targetProgress = useHouseStore.getState().targetProgress;
@@ -145,10 +148,10 @@ export function CameraController({ enableControls = true }: CameraControllerProp
 
       const p = currentProgressRef.current;
 
-      // 1. Evaluate Spline Path Position & Target
-      evaluateCameraPosition(p, _desiredPos);
-      evaluateCameraTarget(p, _desiredTarget);
-      let targetFov = evaluateCameraFov(p);
+      // 1. Evaluate Unified Spline Path Position & Look Target
+      evaluateUnifiedPosition(p, _desiredPos);
+      evaluateUnifiedTarget(p, _desiredTarget);
+      let targetFov = evaluateUnifiedFov(p);
 
       // 2. Responsive Adaptation (Tablet & Mobile framing)
       const isMobile = size.width < CAMERA_CONFIG.responsive.mobileBreakpoint;
@@ -158,7 +161,9 @@ export function CameraController({ enableControls = true }: CameraControllerProp
 
       if (isMobile) {
         targetFov += CAMERA_CONFIG.responsive.mobileFovOffset;
-        _desiredPos.z *= CAMERA_CONFIG.responsive.mobileDistanceScalar;
+        if (_desiredPos.z > 0) {
+          _desiredPos.z *= CAMERA_CONFIG.responsive.mobileDistanceScalar;
+        }
       } else if (isTablet) {
         targetFov += CAMERA_CONFIG.responsive.tabletFovOffset;
       }
@@ -190,10 +195,20 @@ export function CameraController({ enableControls = true }: CameraControllerProp
       }
 
       // 7. Update Cinematic State in Store when passing transition milestones
-      const currentState = getStateAtProgress(p);
+      const currentState = getUnifiedStateAtProgress(p);
       if (currentState !== prevStateRef.current) {
         prevStateRef.current = currentState;
         setExteriorCameraState(currentState);
+      }
+
+      // 8. Update Interior Transition Factor for subtle iris / exposure adaptation
+      const interiorFactor = evaluateInteriorTransitionFactor(p);
+      const factorDelta = Math.abs(interiorFactor - lastInteriorFactorRef.current);
+      if (factorDelta >= 0.02 || interiorFactor === 0.0 || interiorFactor === 1.0) {
+        if (lastInteriorFactorRef.current !== interiorFactor) {
+          lastInteriorFactorRef.current = interiorFactor;
+          setInteriorFactor(interiorFactor);
+        }
       }
     }
   });

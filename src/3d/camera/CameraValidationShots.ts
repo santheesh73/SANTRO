@@ -1,16 +1,20 @@
 import { ValidationShotConfig } from './types';
 
 /**
- * SANTRO M6 — Camera Validation Shots Specification
+ * SANTRO M7 — Master Architectural Camera Validation Shots Catalog
  *
- * Defines the 5 fixed validation states required by M6 Section 32:
- * - Shot 01: Establishing exterior (Frame 000, t=0.0s)
- * - Shot 02: Exterior approach (Frame 034, t=1.4s)
- * - Shot 03: Façade reveal (Frame 070, t=2.9s)
- * - Shot 04: Entrance approach (Frame 095, t=3.9s)
- * - Shot 05: Door framing (Frame 108, t=4.5s)
+ * Defines the 9 calibrated validation states spanning the continuous exterior-to-interior journey:
+ * - Shot 01: Establishing Exterior (Frame 000, t=0.0s, p=0.00)
+ * - Shot 02: Exterior Approach Glide (Frame 034, t=1.4s, p=0.10)
+ * - Shot 03: Pool Terrace Façade Reveal (Frame 070, t=2.9s, p=0.25)
+ * - Shot 04: Entrance Portal Approach (Frame 095, t=3.9s, p=0.40)
+ * - Shot 05: Door Threshold Passage (Frame 108, t=4.5s, p=0.50) [Seamless Handoff Boundary]
+ * - Shot 06: Foyer Settle & Walnut Reveal (Frame 131, t=5.46s, p=0.62)
+ * - Shot 07: Gallery Corridor Tracking (Frame 150, t=6.25s, p=0.76)
+ * - Shot 08: Glass Workspace & Lab Reveal (Frame 167, t=6.96s, p=0.83)
+ * - Shot 09: Double-Height Atrium Core (Frames 185-200, t=7.7s-8.3s, p=1.00)
  *
- * Used for independent visual inspection and one-click HUD jumping.
+ * Used for independent visual inspection, automated validation, and one-click HUD jumping.
  */
 
 export const CAMERA_VALIDATION_SHOTS: Record<string, ValidationShotConfig> = {
@@ -40,7 +44,7 @@ export const CAMERA_VALIDATION_SHOTS: Record<string, ValidationShotConfig> = {
     label: 'Shot 02',
     name: 'Exterior Approach',
     state: 'EXTERIOR_APPROACH',
-    progress: 0.20,
+    progress: 0.10,
     frameRef: 'frame_034 (t=1.4s)',
     position: [2.1, 5.8, 19.5],
     target: [0.0, 3.0, 1.8],
@@ -60,7 +64,7 @@ export const CAMERA_VALIDATION_SHOTS: Record<string, ValidationShotConfig> = {
     label: 'Shot 03',
     name: 'Façade Reveal',
     state: 'FACADE_REVEAL',
-    progress: 0.50,
+    progress: 0.25,
     frameRef: 'frame_070 (t=2.9s)',
     position: [-1.2, 1.65, 14.8],
     target: [0.0, 1.6, 0.0],
@@ -80,7 +84,7 @@ export const CAMERA_VALIDATION_SHOTS: Record<string, ValidationShotConfig> = {
     label: 'Shot 04',
     name: 'Entrance Approach',
     state: 'ENTRANCE_APPROACH',
-    progress: 0.80,
+    progress: 0.40,
     frameRef: 'frame_095 (t=3.9s)',
     position: [-0.3, 1.62, 6.5],
     target: [0.0, 1.6, -2.0],
@@ -98,9 +102,9 @@ export const CAMERA_VALIDATION_SHOTS: Record<string, ValidationShotConfig> = {
     id: 'shot_05',
     shotNumber: 5,
     label: 'Shot 05',
-    name: 'Door Threshold Framing',
-    state: 'DOOR_TRANSITION',
-    progress: 1.0,
+    name: 'Door Threshold Passage',
+    state: 'DOOR_THRESHOLD',
+    progress: 0.50,
     frameRef: 'frame_108 (t=4.5s)',
     position: [0.0, 1.6, 2.2],
     target: [0.0, 1.6, -6.0],
@@ -112,6 +116,86 @@ export const CAMERA_VALIDATION_SHOTS: Record<string, ValidationShotConfig> = {
       'Seamless travertine floor threshold transition',
       'Vertical fluted walnut wall initial reveal',
       'Corridor linear ceiling reveal vanishing point',
+    ],
+  },
+  shot_06: {
+    id: 'shot_06',
+    shotNumber: 6,
+    label: 'Shot 06',
+    name: 'Foyer Settle & Walnut Reveal',
+    state: 'FOYER_HOLD',
+    progress: 0.62,
+    frameRef: 'frame_131 (t=5.46s)',
+    position: [0.20, 1.60, -1.8],
+    target: [1.60, 1.60, -4.2],
+    fov: 58,
+    description:
+      'Pacing settles inside the entrance vestibule; framing the 24-batten fluted walnut accent wall, stone typography plinth, and floating staircase anchor pins.',
+    focalPoints: [
+      '24-batten fluted walnut rhythm',
+      'Floating staircase travertine treads',
+      'Travertine vestibule floor joints',
+      'Recessed ceiling linear trough',
+    ],
+  },
+  shot_07: {
+    id: 'shot_07',
+    shotNumber: 7,
+    label: 'Shot 07',
+    name: 'Gallery Corridor Tracking',
+    state: 'CORRIDOR_TRAVEL',
+    progress: 0.76,
+    frameRef: 'frame_150 (t=6.25s)',
+    position: [0.0, 1.60, -6.0],
+    target: [-0.60, 1.55, -10.5],
+    fov: 58,
+    description:
+      'Smooth tracking shot along the architectural corridor axis; warm recessed downlights grazing travertine floors, guiding the visitor toward the exhibition core.',
+    focalPoints: [
+      'Linear corridor perspective lines',
+      'Recessed 2700K downlight pools',
+      'Frameless glass partition boundary',
+      'Dark charcoal baseboard reveals',
+    ],
+  },
+  shot_08: {
+    id: 'shot_08',
+    shotNumber: 8,
+    label: 'Shot 08',
+    name: 'Glass Workspace Reveal',
+    state: 'GALLERY_REVEAL',
+    progress: 0.83,
+    frameRef: 'frame_167 (t=6.96s)',
+    position: [-0.35, 1.60, -7.8],
+    target: [-3.20, 1.40, -8.5],
+    fov: 60,
+    description:
+      'Independent camera look-target reveals the glass-walled engineering lab on the left, framing walnut executive desk, credenza, and workstation setup.',
+    focalPoints: [
+      'Floor-to-ceiling glass transparency',
+      'Walnut executive desk joinery',
+      'Minimalist workstation monitors',
+      'Specular glass reflections',
+    ],
+  },
+  shot_09: {
+    id: 'shot_09',
+    shotNumber: 9,
+    label: 'Shot 09',
+    name: 'Double-Height Atrium Core',
+    state: 'INTERIOR_ROOM_APPROACH',
+    progress: 1.0,
+    frameRef: 'frame_185 (t=7.71s)',
+    position: [0.0, 1.60, -14.5],
+    target: [0.0, 1.30, -19.5],
+    fov: 54,
+    description:
+      'Arrival into the monumental 6.8m double-height exhibition atrium; framing monolithic travertine central plinth, floating mezzanine bridges, and rear glass curtain wall vista.',
+    focalPoints: [
+      'Monolithic travertine plinth toe-kick glow',
+      'Upper mezzanine balustrades and bridges',
+      'Linear ceiling indirect cove lighting',
+      'Floor-to-ceiling rear curtain wall mountain panorama',
     ],
   },
 };

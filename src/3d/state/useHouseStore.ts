@@ -4,7 +4,7 @@ import { detectDefaultQualityTier } from '@/3d/utils/quality';
 import { ReferenceCameraId } from '@/3d/camera/referenceCameras';
 import { MaterialDisplayMode } from '@/3d/materials/types';
 import { TimeOfDayPreset, LightingDebugSolo } from '@/3d/lighting/types';
-import { ExteriorCameraState } from '@/3d/camera/types';
+import { CameraJourneyState } from '@/3d/camera/types';
 
 export type CameraMode = 'cinematic' | 'inspect' | 'free' | 'spline';
 
@@ -13,7 +13,8 @@ export interface HouseState {
   scrollProgress: number;
   targetProgress: number;
   cinematicProgress: number;
-  exteriorCameraState: ExteriorCameraState;
+  exteriorCameraState: CameraJourneyState;
+  interiorFactor: number; // 0.0 (exterior) to 1.0 (interior iris adaptation)
   activeValidationShotId: string | null;
   showCameraSplineDebug: boolean;
   currentZone: SpatialZone;
@@ -50,7 +51,8 @@ export interface HouseState {
   setScrollProgress: (progress: number) => void;
   setCinematicProgress: (progress: number) => void;
   setTargetProgress: (progress: number) => void;
-  setExteriorCameraState: (state: ExteriorCameraState) => void;
+  setExteriorCameraState: (state: CameraJourneyState) => void;
+  setInteriorFactor: (factor: number) => void;
   setActiveValidationShotId: (id: string | null) => void;
   setShowCameraSplineDebug: (show: boolean) => void;
   setCameraMode: (mode: CameraMode) => void;
@@ -78,6 +80,7 @@ export const useHouseStore = create<HouseState>((set) => ({
   targetProgress: 0.0,
   cinematicProgress: 0.0,
   exteriorCameraState: 'EXTERIOR_ESTABLISHING',
+  interiorFactor: 0.0,
   activeValidationShotId: 'shot_01',
   showCameraSplineDebug: false,
   currentZone: 'EXTERIOR',
@@ -131,6 +134,11 @@ export const useHouseStore = create<HouseState>((set) => ({
   setExteriorCameraState: (state) =>
     set({
       exteriorCameraState: state,
+    }),
+
+  setInteriorFactor: (factor) =>
+    set({
+      interiorFactor: Math.max(0, Math.min(1, factor)),
     }),
 
   setActiveValidationShotId: (id) =>

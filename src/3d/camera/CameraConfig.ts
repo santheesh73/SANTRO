@@ -40,7 +40,7 @@ export const CAMERA_CONFIG = {
   boundaries: {
     minY: 1.45, // Absolute minimum ground clearance (above human eye-level 1.6m)
     maxY: 16.0, // Maximum aerial altitude
-    minZ: 1.8, // Stops right at the entrance door threshold [0, 1.6, 2.2]
+    minZ: -24.0, // Extends through foyer, corridor, and double-height atrium to rear glass curtain wall
     maxZ: 32.0, // Maximum distance out in the south valley
     minX: -8.0, // West boundary limit
     maxX: 8.0, // East boundary limit
@@ -53,6 +53,14 @@ export const CAMERA_CONFIG = {
     startZ: 4.5, // Door starts swinging inward when camera reaches Z = 4.5m
     endZ: 2.2, // Door is fully opened (-85 deg) when camera arrives at Z = 2.2m
     maxAngleRad: -1.484, // -85 degrees in radians
+  },
+
+  // Interior Transition Dynamics & Exposure Adaptation (M7 §24-25)
+  interior: {
+    exposureBoost: 0.12, // Subtle iris adaptation boost (+0.12) as camera crosses into interior
+    transitionStartProgress: 0.48, // Iris adaptation start
+    transitionEndProgress: 0.60, // Full interior adaptation achieved inside foyer
+    unifiedSplitProgress: 0.50, // Unified progress threshold where interior path begins
   },
 
   // Responsive Optical Offsets (Maintains architectural hierarchy on mobile/tablet)
