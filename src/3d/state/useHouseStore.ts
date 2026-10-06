@@ -4,13 +4,18 @@ import { detectDefaultQualityTier } from '@/3d/utils/quality';
 import { ReferenceCameraId } from '@/3d/camera/referenceCameras';
 import { MaterialDisplayMode } from '@/3d/materials/types';
 import { TimeOfDayPreset, LightingDebugSolo } from '@/3d/lighting/types';
+import { ExteriorCameraState } from '@/3d/camera/types';
 
-export type CameraMode = 'spline' | 'inspect' | 'free';
+export type CameraMode = 'cinematic' | 'inspect' | 'free' | 'spline';
 
 export interface HouseState {
   // Spatial Journey Progress (0.0 to 1.0)
   scrollProgress: number;
   targetProgress: number;
+  cinematicProgress: number;
+  exteriorCameraState: ExteriorCameraState;
+  activeValidationShotId: string | null;
+  showCameraSplineDebug: boolean;
   currentZone: SpatialZone;
 
   // Camera & Interaction
@@ -43,6 +48,12 @@ export interface HouseState {
 
   // Actions
   setScrollProgress: (progress: number) => void;
+  setCinematicProgress: (progress: number) => void;
+  setTargetProgress: (progress: number) => void;
+  setExteriorCameraState: (state: ExteriorCameraState) => void;
+  setActiveValidationShotId: (id: string | null) => void;
+  setShowCameraSplineDebug: (show: boolean) => void;
+  setCameraMode: (mode: CameraMode) => void;
   navigateToZone: (zone: SpatialZone) => void;
   setActiveRefCamera: (camId: ReferenceCameraId | null) => void;
   enterInspectMode: (targetId: string) => void;
@@ -65,10 +76,14 @@ export interface HouseState {
 export const useHouseStore = create<HouseState>((set) => ({
   scrollProgress: 0.0,
   targetProgress: 0.0,
+  cinematicProgress: 0.0,
+  exteriorCameraState: 'EXTERIOR_ESTABLISHING',
+  activeValidationShotId: 'shot_01',
+  showCameraSplineDebug: false,
   currentZone: 'EXTERIOR',
 
-  cameraMode: 'free',
-  activeRefCamera: 'exterior',
+  cameraMode: 'cinematic',
+  activeRefCamera: null,
   cameraTransitionNonce: 0,
   inspectTargetId: null,
   isDoorOpen: false,
@@ -90,9 +105,47 @@ export const useHouseStore = create<HouseState>((set) => ({
   modelLoaded: false,
   modelError: null,
 
-  setScrollProgress: (progress) =>
+  setScrollProgress: (progress) => {
+    const clamped = Math.max(0, Math.min(1, progress));
     set({
-      scrollProgress: Math.max(0, Math.min(1, progress)),
+      scrollProgress: clamped,
+      cinematicProgress: clamped,
+    });
+  },
+
+  setCinematicProgress: (progress) => {
+    const clamped = Math.max(0, Math.min(1, progress));
+    set({
+      scrollProgress: clamped,
+      cinematicProgress: clamped,
+    });
+  },
+
+  setTargetProgress: (progress) => {
+    const clamped = Math.max(0, Math.min(1, progress));
+    set({
+      targetProgress: clamped,
+    });
+  },
+
+  setExteriorCameraState: (state) =>
+    set({
+      exteriorCameraState: state,
+    }),
+
+  setActiveValidationShotId: (id) =>
+    set({
+      activeValidationShotId: id,
+    }),
+
+  setShowCameraSplineDebug: (show) =>
+    set({
+      showCameraSplineDebug: show,
+    }),
+
+  setCameraMode: (mode) =>
+    set({
+      cameraMode: mode,
     }),
 
   navigateToZone: (zone) =>

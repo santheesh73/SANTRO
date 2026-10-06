@@ -3,6 +3,8 @@
 import React, { Suspense } from 'react';
 import { PerspectiveCamera } from '@/3d/camera/PerspectiveCamera';
 import { CameraController } from '@/3d/camera/CameraController';
+import { DoorInteractionController } from '@/3d/camera/DoorInteractionController';
+import { CameraDebug } from '@/3d/camera/CameraDebug';
 import { SceneLighting } from '@/3d/lighting/SceneLighting';
 import { Atmosphere } from '@/3d/environment/Atmosphere';
 import { PlaceholderHouse } from '@/3d/scene/PlaceholderHouse';
@@ -38,6 +40,12 @@ export function ArchitecturalScene({
 
       {/* 2. Damped Inspection Camera Controls with Reference View Transitions */}
       <CameraController enableControls={enableControls} />
+
+      {/* 2b. Dynamic Entrance Pivot Door Synchronization */}
+      <DoorInteractionController />
+
+      {/* 2c. Camera Spline & Waypoints Debug Visualizer */}
+      <CameraDebug />
 
       {/* 3. Atmospheric Sky & Ground Horizon */}
       <Atmosphere />
