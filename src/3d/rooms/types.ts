@@ -1,7 +1,14 @@
 import { SpatialZone } from '@/types';
 import { CameraJourneyState } from '@/3d/camera/types';
 import { TimeOfDayPreset } from '@/3d/lighting/types';
-import { PortfolioProject, SkillDomain, ArchiveRecord, PhilosophyPillar, ContactData, ProfileData } from '@/content/types';
+export type {
+  PortfolioProject,
+  SkillDomain,
+  ArchiveRecord,
+  PhilosophyPillar,
+  ContactData,
+  ProfileData,
+} from '@/content/types';
 
 export type RoomId =
   | 'exterior'

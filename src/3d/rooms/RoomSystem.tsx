@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef } from 'react';
 import { useHouseStore } from '@/3d/state/useHouseStore';
-import { getRoomForJourneyProgress, PORTFOLIO_ROOMS } from './RoomRegistry';
+import { getRoomForJourneyProgress } from './RoomRegistry';
 import { RoomId } from './types';
 
 // Room Implementations

@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useMemo, useEffect } from 'react';
-import * as THREE from 'three';
 import { PortfolioProject } from '@/content/types';
 import { ArchitecturalPlinth } from './ArchitecturalPlinth';
 import { createDynamicCanvasTexture, drawWrappedText } from '../textures/createExhibitionTexture';

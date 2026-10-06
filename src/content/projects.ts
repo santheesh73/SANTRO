@@ -164,7 +164,7 @@ export const projectsData: PortfolioProject[] = [
     name: 'MINCHAL',
     subtitle: 'Accessible OCR Electricity Consumption Optimizer',
     shortDescription:
-      'Electricity-use analysis experience providing appliance-level breakdown and rupee-level estimates from paper bill photos in Tamil and English without smart meters.',
+      'Electricity-use analysis and OCR experience providing appliance-level breakdown and rupee-level estimates from paper bill photos in Tamil and English without smart meters.',
     category: 'Energy Analytics & Accessibility',
     year: '2023',
     role: 'Systems Programmer',

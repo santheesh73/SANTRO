@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useMemo, useEffect } from 'react';
-import * as THREE from 'three';
 import { skillsData } from '@/content/skills';
 import { createDynamicCanvasTexture } from '../textures/createExhibitionTexture';
 
