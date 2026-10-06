@@ -140,6 +140,7 @@ export function ViewportHUD() {
               onChange={(e) => {
                 if (cameraMode !== 'cinematic') setCameraMode('cinematic');
                 setActiveRefCamera(null);
+                setActiveValidationShotId(null);
                 setTargetProgress(parseFloat(e.target.value));
               }}
               className="w-full h-1.5 bg-neutral-800 rounded-lg appearance-none cursor-pointer accent-cyan-400"
@@ -159,8 +160,9 @@ export function ViewportHUD() {
             <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-9 gap-1">
               {VALIDATION_SHOT_LIST.map((shot) => {
                 const isActive =
-                  Math.abs(cinematicProgress - shot.progress) < 0.05 ||
-                  activeValidationShotId === shot.id;
+                  Math.abs(cinematicProgress - shot.progress) < 0.04 ||
+                  (activeValidationShotId === shot.id &&
+                    Math.abs(cinematicProgress - shot.progress) < 0.08);
                 return (
                   <button
                     key={shot.id}

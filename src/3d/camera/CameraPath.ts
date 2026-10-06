@@ -2,20 +2,14 @@ import * as THREE from 'three';
 import { CameraWaypoint, CameraJourneyState } from './types';
 import {
   EXTERIOR_WAYPOINTS,
-  exteriorPositionSpline,
-  exteriorTargetSpline,
   getStateAtProgress as getExteriorStateAtProgress,
-  progressToSplineU as exteriorProgressToSplineU,
   evaluateCameraPosition as evaluateExteriorPosition,
   evaluateCameraTarget as evaluateExteriorTarget,
   evaluateCameraFov as evaluateExteriorFov,
 } from './exteriorCameraPath';
 import {
   INTERIOR_WAYPOINTS,
-  interiorPositionSpline,
-  interiorTargetSpline,
   getInteriorStateAtProgress,
-  interiorProgressToSplineU,
   evaluateInteriorPosition,
   evaluateInteriorTarget,
   evaluateInteriorFov,

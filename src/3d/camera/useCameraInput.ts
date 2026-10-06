@@ -42,12 +42,17 @@ export function useCameraInput({ enabled = true }: UseCameraInputOptions = {}) {
     (delta: number) => {
       if (!enabled || cameraMode === 'inspect') return;
 
-      const current = useHouseStore.getState().targetProgress;
+      const store = useHouseStore.getState();
+      const current = store.targetProgress;
       const step = isReducedMotionRef.current ? delta * 0.5 : delta;
       const next = Math.max(0.0, Math.min(1.0, current + step));
 
       targetProgressRef.current = next;
       setTargetProgress(next);
+
+      if (store.activeValidationShotId !== null) {
+        store.setActiveValidationShotId(null);
+      }
     },
     [enabled, cameraMode, setTargetProgress]
   );

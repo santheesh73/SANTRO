@@ -350,22 +350,54 @@ assert(getInteriorStateAtProgress(1.0) === 'INTERIOR_ROOM_APPROACH', 'p=1.00 -> 
 // =========================================================================
 // 8. Bidirectional Traversal Verification
 // =========================================================================
-const posForward = new THREE.Vector3();
-const posReverse = new THREE.Vector3();
-let maxBidirectionalDiff = 0;
-
+// Evaluate forward sequence (p: 0.0 -> 1.0) and cache
+const forwardPositions = [];
+const forwardTargets = [];
 for (let s = 0; s <= 100; s++) {
   const p = s / 100;
-  evaluatePosition(p, posForward);
-  // Evaluate in reverse order
-  evaluatePosition(1.0 - (1.0 - p), posReverse);
-  const diff = posForward.distanceTo(posReverse);
-  maxBidirectionalDiff = Math.max(maxBidirectionalDiff, diff);
+  const pVec = new THREE.Vector3();
+  const tVec = new THREE.Vector3();
+  evaluatePosition(p, pVec);
+  evaluateTarget(p, tVec);
+  forwardPositions.push(pVec);
+  forwardTargets.push(tVec);
+}
+
+// Evaluate reverse sequence stepping backwards (p: 1.0 -> 0.0)
+let maxReverseStepDist = 0;
+let maxCoordinateDiff = 0;
+let prevReversePos = null;
+
+for (let s = 100; s >= 0; s--) {
+  const p = s / 100;
+  const revPos = new THREE.Vector3();
+  const revTarget = new THREE.Vector3();
+  evaluatePosition(p, revPos);
+  evaluateTarget(p, revTarget);
+
+  assert(!Number.isNaN(revPos.x) && !Number.isNaN(revPos.y) && !Number.isNaN(revPos.z), `Reverse step p=${p} position has valid numbers`);
+  assert(!Number.isNaN(revTarget.x) && !Number.isNaN(revTarget.y) && !Number.isNaN(revTarget.z), `Reverse step p=${p} target has valid numbers`);
+
+  const fwdPos = forwardPositions[s];
+  const fwdTarget = forwardTargets[s];
+  const posDiff = revPos.distanceTo(fwdPos);
+  const tgtDiff = revTarget.distanceTo(fwdTarget);
+  maxCoordinateDiff = Math.max(maxCoordinateDiff, posDiff, tgtDiff);
+
+  if (prevReversePos) {
+    const stepDist = revPos.distanceTo(prevReversePos);
+    maxReverseStepDist = Math.max(maxReverseStepDist, stepDist);
+  }
+  prevReversePos = revPos;
 }
 
 assert(
-  maxBidirectionalDiff < 0.0001,
-  `Bidirectional traversal error is ${maxBidirectionalDiff.toFixed(6)}m (strictly identical forward and backward)`
+  maxCoordinateDiff < 0.0001,
+  `Bidirectional coordinate consistency error is ${maxCoordinateDiff.toFixed(6)}m (stateless mathematical exactness)`
+);
+assert(
+  maxReverseStepDist < 0.45,
+  `Maximum reverse step distance across 100 samples is ${maxReverseStepDist.toFixed(3)}m (smooth reverse motion with zero jitter)`
 );
 
 console.log('='.repeat(75));

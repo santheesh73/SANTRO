@@ -48,17 +48,17 @@ export function DoorInteractionController() {
     const { startZ, endZ, maxAngleRad } = CAMERA_CONFIG.doorTrigger;
 
     let targetAngle = 0.0;
-    if (inCorridor) {
-      if (camZ <= endZ) {
-        targetAngle = maxAngleRad; // Fully open (-85 deg)
-      } else if (camZ >= startZ) {
-        targetAngle = 0.0; // Fully closed
-      } else {
-        // Smooth cubic Hermite progression
-        const t = (startZ - camZ) / (startZ - endZ);
-        const easedT = smoothstep(0.0, 1.0, t);
-        targetAngle = easedT * maxAngleRad;
-      }
+    if (camZ <= endZ) {
+      // Inside the residence or at threshold: door remains stably open
+      targetAngle = maxAngleRad; // Fully open (-85 deg)
+    } else if (camZ >= startZ) {
+      // Out on the pool terrace or exterior: door is closed flush
+      targetAngle = 0.0; // Fully closed
+    } else if (inCorridor) {
+      // Smooth cubic Hermite progression when approaching through entrance portal
+      const t = (startZ - camZ) / (startZ - endZ);
+      const easedT = smoothstep(0.0, 1.0, t);
+      targetAngle = easedT * maxAngleRad;
     }
 
     // 3. Apply rotation to 3D object in WebGL rendering loop

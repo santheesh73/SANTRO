@@ -5,7 +5,7 @@
   "description": "SANTRO — Cinematic 3D Architectural Web Portfolio for Santheesh S",
   "author": "Santheesh S <santheesh73@gmail.com>",
   "scripts": {
-    "prebuild": "node scripts/generate-portfolio-house-glb.mjs && node scripts/verify-assets.mjs",
+    "prebuild": "node scripts/generate-portfolio-house-glb.mjs && node scripts/verify-assets.mjs && node scripts/verify-camera-system.mjs && node scripts/verify-interior-camera.mjs && node scripts/verify-unified-journey.mjs",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -13,6 +13,9 @@
     "type-check": "tsc --noEmit",
     "optimize-models": "node scripts/optimize-model.mjs",
     "verify-assets": "node scripts/verify-assets.mjs",
+    "verify-camera": "node scripts/verify-camera-system.mjs",
+    "verify-interior": "node scripts/verify-interior-camera.mjs",
+    "verify-unified": "node scripts/verify-unified-journey.mjs",
     "generate-textures": "node scripts/generate-textures.mjs",
     "generate-house": "node scripts/generate-portfolio-house-glb.mjs"
   },

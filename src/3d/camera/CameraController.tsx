@@ -6,6 +6,7 @@ import { OrbitControls } from '@react-three/drei';
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 import * as THREE from 'three';
 import { useHouseStore } from '@/3d/state/useHouseStore';
+import { SpatialZone } from '@/types';
 import { REFERENCE_CAMERAS } from './referenceCameras';
 import { CAMERA_CONFIG } from './CameraConfig';
 import { CameraRig } from './CameraRig';
@@ -19,6 +20,36 @@ import {
 import { getDampingFactor } from './CameraInterpolation';
 import { useCameraInput } from './useCameraInput';
 import { CameraJourneyState } from './types';
+
+/**
+ * Maps unified camera journey states to architectural spatial zones
+ */
+export function getZoneForJourneyState(state: CameraJourneyState): SpatialZone {
+  switch (state) {
+    case 'EXTERIOR_ESTABLISHING':
+    case 'EXTERIOR_APPROACH':
+      return 'EXTERIOR';
+    case 'FACADE_REVEAL':
+      return 'TERRACE';
+    case 'ENTRANCE_APPROACH':
+    case 'DOOR_TRANSITION':
+    case 'DOOR_THRESHOLD':
+      return 'ENTRANCE';
+    case 'FOYER_ENTRY':
+    case 'FOYER_HOLD':
+      return 'FOYER';
+    case 'CORRIDOR_ENTRY':
+    case 'CORRIDOR_TRAVEL':
+    case 'GALLERY_ENTRY':
+      return 'GALLERY';
+    case 'GALLERY_REVEAL':
+      return 'LAB';
+    case 'INTERIOR_ROOM_APPROACH':
+      return 'STUDIO';
+    default:
+      return 'EXTERIOR';
+  }
+}
 
 interface CameraControllerProps {
   enableControls?: boolean;
@@ -73,6 +104,7 @@ export function CameraController({ enableControls = true }: CameraControllerProp
   const wasSettledRef = useRef<boolean>(false);
   const prevStateRef = useRef<CameraJourneyState>('EXTERIOR_ESTABLISHING');
   const clockRef = useRef<number>(0.0);
+  const prevCameraModeRef = useRef<string>(cameraMode);
 
   // Listen to reference camera selections or preview toggles
   useEffect(() => {
@@ -93,6 +125,13 @@ export function CameraController({ enableControls = true }: CameraControllerProp
   useFrame((_, delta) => {
     clockRef.current += delta;
     const rig = cameraRigRef.current;
+
+    // Smooth handoff when exiting Orbit Inspect back into Cinematic Spline follower
+    if (prevCameraModeRef.current !== 'cinematic' && cameraMode === 'cinematic') {
+      rig.position.copy(camera.position);
+      rig.quaternion.copy(camera.quaternion);
+    }
+    prevCameraModeRef.current = cameraMode;
 
     // =========================================================================
     // MODE 1: REFERENCE CAMERA TRANSITION (Inspect / Validation Overlay)
@@ -194,11 +233,15 @@ export function CameraController({ enableControls = true }: CameraControllerProp
         setCinematicProgress(p);
       }
 
-      // 7. Update Cinematic State in Store when passing transition milestones
+      // 7. Update Cinematic State & Architectural Spatial Zone in Store
       const currentState = getUnifiedStateAtProgress(p);
       if (currentState !== prevStateRef.current) {
         prevStateRef.current = currentState;
         setExteriorCameraState(currentState);
+        const mappedZone = getZoneForJourneyState(currentState);
+        if (useHouseStore.getState().currentZone !== mappedZone) {
+          useHouseStore.getState().navigateToZone(mappedZone);
+        }
       }
 
       // 8. Update Interior Transition Factor for subtle iris / exposure adaptation

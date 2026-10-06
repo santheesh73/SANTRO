@@ -23,6 +23,21 @@ export const ARCHITECTURAL_TARGETS = {
 
   // Threshold Transition: Vanishing point extending straight down the gallery corridor axis (for M7)
   galleryAxis: new THREE.Vector3(0.0, 1.6, -6.0),
+
+  // Foyer Settle: Framing 24-batten fluted walnut wall, typography plinth, and floating stair
+  foyerWalnutWall: new THREE.Vector3(1.60, 1.60, -4.2),
+
+  // Corridor Circulation: Longitudinal vanishing point down central corridor axis
+  corridorAxis: new THREE.Vector3(0.0, 1.60, -10.0),
+
+  // Workspace Lab Reveal: Framing executive walnut desk, credenza, and monitors through frameless glass
+  workspaceLab: new THREE.Vector3(-3.20, 1.40, -8.5),
+
+  // Double-Height Atrium Emergence: Expansive volume framing mezzanine walkways
+  atriumVolume: new THREE.Vector3(0.0, 1.50, -15.0),
+
+  // Exhibition Core Finale: Framing monolithic travertine plinth toe-kick and rear curtain wall mountain panorama
+  atriumPlinthVista: new THREE.Vector3(0.0, 1.30, -19.5),
 } as const;
 
 export type ArchitecturalTargetKey = keyof typeof ARCHITECTURAL_TARGETS;
