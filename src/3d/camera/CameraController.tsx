@@ -8,17 +8,14 @@ import * as THREE from 'three';
 import { useHouseStore } from '@/3d/state/useHouseStore';
 import { REFERENCE_CAMERAS } from './referenceCameras';
 import { CAMERA_CONFIG } from './CameraConfig';
+import { CameraRig } from './CameraRig';
 import {
   evaluateCameraPosition,
   evaluateCameraTarget,
   evaluateCameraFov,
   getStateAtProgress,
 } from './exteriorCameraPath';
-import {
-  getDampingFactor,
-  applyLevelHorizonLookAt,
-  clampPositionToBounds,
-} from './CameraInterpolation';
+import { getDampingFactor } from './CameraInterpolation';
 import { useCameraInput } from './useCameraInput';
 import { ExteriorCameraState } from './types';
 
@@ -26,11 +23,9 @@ interface CameraControllerProps {
   enableControls?: boolean;
 }
 
-// Reusable calculation vectors — Zero garbage collection allocations per frame
+// Reusable scratch vectors — Zero garbage collection allocations per frame
 const _desiredPos = new THREE.Vector3();
 const _desiredTarget = new THREE.Vector3();
-const _smoothedTarget = new THREE.Vector3(0.0, 3.8, 2.0);
-const _microOffset = new THREE.Vector3();
 
 /**
  * SANTRO M6 — Master Exterior Cinematic Camera Controller
@@ -38,14 +33,20 @@ const _microOffset = new THREE.Vector3();
  * Implements the continuous exterior camera journey inspired by the reference video:
  * - Establishing Drone Shot (t = 0.0s) -> Descent -> Pool Terrace -> Entrance Portal -> Door Threshold (t = 4.5s)
  * - Virtual scroll-to-progress progression with momentum damping
- * - Independent position, look-target, and lens FOV interpolation
+ * - Dedicated CameraRig managing independent position, look-target, and lens FOV interpolation
  * - Strict architectural level-horizon stabilization (zero roll)
  * - Responsive framing adaptation for Desktop, Tablet, and Mobile
  * - Seamless handoff to OrbitControls in inspect mode
+ * - Throttled store synchronization preventing per-frame React re-render spikes
  */
 export function CameraController({ enableControls = true }: CameraControllerProps) {
   const controlsRef = useRef<OrbitControlsImpl | null>(null);
   const { camera, size } = useThree();
+
+  // Controlled camera rig instance
+  const cameraRigRef = useRef<CameraRig>(
+    new CameraRig([4.2, 12.5, 26.0], [0.0, 3.8, 2.0], CAMERA_CONFIG.defaultFov)
+  );
 
   // Attach normalized multi-device input handler
   useCameraInput({ enabled: true });
@@ -63,8 +64,10 @@ export function CameraController({ enableControls = true }: CameraControllerProp
   const refTargetFov = useRef<number>(48);
   const isRefTransitioning = useRef<boolean>(false);
 
-  // Internal smoothed progress value
+  // Internal smoothed progress value and throttle references
   const currentProgressRef = useRef<number>(0.0);
+  const lastStoreProgressRef = useRef<number>(0.0);
+  const wasSettledRef = useRef<boolean>(false);
   const prevStateRef = useRef<ExteriorCameraState>('EXTERIOR_ESTABLISHING');
   const clockRef = useRef<number>(0.0);
 
@@ -86,38 +89,38 @@ export function CameraController({ enableControls = true }: CameraControllerProp
 
   useFrame((_, delta) => {
     clockRef.current += delta;
-    const persCam = camera as THREE.PerspectiveCamera;
+    const rig = cameraRigRef.current;
 
     // =========================================================================
     // MODE 1: REFERENCE CAMERA TRANSITION (Inspect / Validation Overlay)
     // =========================================================================
     if (isRefTransitioning.current) {
-      const dampFactor = getDampingFactor(CAMERA_CONFIG.damping.transitionFast, delta);
-      camera.position.lerp(refTargetPos.current, dampFactor);
+      rig.update(
+        delta,
+        refTargetPos.current,
+        refTargetLookAt.current,
+        refTargetFov.current,
+        {
+          applyMicroMovement: false,
+          posDampingRate: CAMERA_CONFIG.damping.transitionFast,
+          targetDampingRate: CAMERA_CONFIG.damping.transitionFast,
+          fovDampingRate: CAMERA_CONFIG.damping.transitionFast,
+        }
+      );
+      rig.applyToCamera(camera);
 
       if (controlsRef.current) {
-        controlsRef.current.target.lerp(refTargetLookAt.current, dampFactor);
+        controlsRef.current.target.copy(rig.target);
         controlsRef.current.update();
-      } else {
-        applyLevelHorizonLookAt(camera, refTargetLookAt.current, dampFactor);
-      }
-
-      if ('fov' in camera) {
-        const fovDiff = refTargetFov.current - persCam.fov;
-        if (Math.abs(fovDiff) > 0.05) {
-          persCam.fov += fovDiff * dampFactor;
-          persCam.updateProjectionMatrix();
-        }
       }
 
       const distPos = camera.position.distanceTo(refTargetPos.current);
-      const distTarget = controlsRef.current
-        ? controlsRef.current.target.distanceTo(refTargetLookAt.current)
-        : camera.position.distanceTo(refTargetLookAt.current);
+      const distTarget = rig.target.distanceTo(refTargetLookAt.current);
 
       if (distPos < 0.05 && distTarget < 0.05) {
         isRefTransitioning.current = false;
-        camera.position.copy(refTargetPos.current);
+        rig.reset(refTargetPos.current, refTargetLookAt.current, refTargetFov.current);
+        rig.applyToCamera(camera);
         if (controlsRef.current) {
           controlsRef.current.target.copy(refTargetLookAt.current);
           controlsRef.current.update();
@@ -141,7 +144,6 @@ export function CameraController({ enableControls = true }: CameraControllerProp
       );
 
       const p = currentProgressRef.current;
-      setCinematicProgress(p);
 
       // 1. Evaluate Spline Path Position & Target
       evaluateCameraPosition(p, _desiredPos);
@@ -161,48 +163,33 @@ export function CameraController({ enableControls = true }: CameraControllerProp
         targetFov += CAMERA_CONFIG.responsive.tabletFovOffset;
       }
 
-      // 3. Subtle Natural Micro-Movement (Stabilization breathing)
-      if (CAMERA_CONFIG.microMovement.enabled) {
-        const time = clockRef.current * CAMERA_CONFIG.microMovement.frequency * Math.PI * 2;
-        const amp = CAMERA_CONFIG.microMovement.positionAmplitude;
-        _microOffset.set(
-          Math.sin(time) * amp,
-          Math.cos(time * 0.7) * amp * 0.5,
-          Math.sin(time * 0.5) * amp
-        );
-        _desiredPos.add(_microOffset);
-      }
+      // 3. Update CameraRig physics, micro-movement, boundaries, independent damping, and level-horizon quaternion
+      rig.update(delta, _desiredPos, _desiredTarget, targetFov, {
+        applyMicroMovement: CAMERA_CONFIG.microMovement.enabled,
+        clockTime: clockRef.current,
+      });
 
-      // 4. Collision Safety Boundaries Check
-      const b = CAMERA_CONFIG.boundaries;
-      clampPositionToBounds(_desiredPos, b.minX, b.maxX, b.minY, b.maxY, b.minZ, b.maxZ);
+      // 4. Apply rig to Three.js camera
+      rig.applyToCamera(camera);
 
-      // 5. Independent Position Damping
-      const posDamp = getDampingFactor(CAMERA_CONFIG.damping.position, delta);
-      camera.position.lerp(_desiredPos, posDamp);
-
-      // 6. Independent Target Damping & Strict Level-Horizon LookAt
-      const targetDamp = getDampingFactor(CAMERA_CONFIG.damping.target, delta);
-      _smoothedTarget.lerp(_desiredTarget, targetDamp);
-      applyLevelHorizonLookAt(camera, _smoothedTarget);
-
-      // 7. Lens FOV Damping
-      if ('fov' in camera) {
-        const fovDamp = getDampingFactor(CAMERA_CONFIG.damping.fov, delta);
-        const fovDiff = targetFov - persCam.fov;
-        if (Math.abs(fovDiff) > 0.02) {
-          persCam.fov += fovDiff * fovDamp;
-          persCam.updateProjectionMatrix();
-        }
-      }
-
-      // 8. Update OrbitControls anchor so inspection begins at current view
+      // 5. Update OrbitControls anchor so inspection begins at current view
       if (controlsRef.current) {
-        controlsRef.current.target.copy(_smoothedTarget);
+        controlsRef.current.target.copy(rig.target);
         controlsRef.current.update();
       }
 
-      // 9. Update Cinematic State in Store
+      // 6. Throttled Store Synchronization (Eliminates 60Hz React re-render cascades)
+      const progressDelta = Math.abs(p - lastStoreProgressRef.current);
+      const isNearEndpoint = p <= 0.001 || p >= 0.999;
+      const isSettled = Math.abs(p - targetProgress) < 0.001;
+
+      if (progressDelta >= 0.005 || isNearEndpoint || (isSettled && !wasSettledRef.current)) {
+        lastStoreProgressRef.current = p;
+        wasSettledRef.current = isSettled;
+        setCinematicProgress(p);
+      }
+
+      // 7. Update Cinematic State in Store when passing transition milestones
       const currentState = getStateAtProgress(p);
       if (currentState !== prevStateRef.current) {
         prevStateRef.current = currentState;

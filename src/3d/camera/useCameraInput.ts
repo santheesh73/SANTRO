@@ -76,6 +76,11 @@ export function useCameraInput({ enabled = true }: UseCameraInputOptions = {}) {
 
     // 2. Mobile Touch Swipe Listeners
     const handleTouchStart = (e: TouchEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (target?.closest('button, input, select, textarea, [data-prevent-scroll]')) {
+        touchStartYRef.current = null;
+        return;
+      }
       if (e.touches.length === 1) {
         touchStartYRef.current = e.touches[0].clientY;
       }

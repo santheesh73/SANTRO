@@ -70,20 +70,22 @@ The exterior journey guides the visitor from an elevated aerial drone perspectiv
 
 ## 2. Component Architecture
 
-The camera system is strictly organized into 10 decoupled modules under `src/3d/camera/`:
+The camera system is strictly organized into decoupled modules under `src/3d/camera/`:
 
 | Module | Responsibility |
 | :--- | :--- |
 | `types.ts` | Type definitions for states, modes, waypoints, configs, and boundaries |
 | `CameraConfig.ts` | Calibrated physical damping rates, optical limits, input sensitivities, and bounds |
 | `CameraInterpolation.ts` | Zero-allocation mathematical utilities, Catmull-Rom evaluation, level-horizon matrix calculations |
-| `exteriorCameraPath.ts` | Centralized authored 3D spline trajectory connecting 7 calibrated waypoints |
+| `CameraRig.ts` | Controlled camera rig encapsulating physical position, look-target, level-horizon orientation, and lens FOV |
+| `CameraPath.ts` / `exteriorCameraPath.ts` | Centralized authored 3D spline trajectory with piecewise progress-to-curve mapping (`progressToSplineU`) |
 | `CameraTargets.ts` | Centralized architectural look-target definitions (house mass, pool, door portal, gallery axis) |
+| `CameraPresets.ts` | Unified registry of 5 Calibrated Validation Shots (§32) and Reference Views (M0–M2) |
 | `CameraValidationShots.ts` | 5 fixed reference validation shots corresponding to M6 §32 |
-| `useCameraInput.ts` | Multi-device virtual scroll listener with momentum physics and boundary limits |
-| `DoorInteractionController.tsx` | High-frequency 3D door rotation controller tied to camera $Z$ proximity |
-| `CameraDebug.tsx` | Development-only 3D spline line and waypoint visualizer |
-| `CameraController.tsx` | Master coordinator orchestrating spline follow, inspect orbit, and validation transitions |
+| `useCameraInput.ts` | Multi-device virtual scroll listener with momentum physics, HUD scroll isolation, and boundary limits |
+| `DoorInteractionController.tsx` | High-frequency 3D door rotation controller with spatial corridor gating and throttled store updates |
+| `CameraDebug.tsx` | Development-only 3D spline line and waypoint visualizer with memoized GPU resources |
+| `CameraController.tsx` | Master coordinator orchestrating CameraRig spline follow, inspect orbit, and throttled UI synchronization |
 
 ---
 
@@ -91,11 +93,13 @@ The camera system is strictly organized into 10 decoupled modules under `src/3d/
 
 Camera calculations execute 60–120 times per second inside the `@react-three/fiber` `useFrame` render loop. To prevent browser garbage collection pauses (GC jank), the system adheres to strict allocation-free principles:
 
-1. **Static Reusable Math Primitives:**
-   All temporary vectors (`_desiredPos`, `_desiredTarget`, `_smoothedTarget`, `_microOffset`, `_forward`, `_right`, `_rotMatrix`, `_targetQuat`) are instantiated once at module scope. Zero objects are instantiated inside `useFrame`.
-2. **Decoupled React State:**
-   Frame-by-frame progress updates are held in mutable `useRef<number>` references. Zustand store updates for high-frequency progress (`setCinematicProgress`) are called without triggering re-renders of the root canvas scene graph.
-3. **State Change Debouncing:**
+1. **Static Reusable Math Primitives & Dedicated CameraRig:**
+   All temporary vectors and matrices are instantiated once inside `CameraRig` and module scope. Zero objects are instantiated inside `useFrame`.
+2. **Piecewise Spline Progress Mapping (`progressToSplineU`):**
+   Catmull-Rom curves in Three.js parameterize by spatial arc length, causing substantial deviation when waypoints are unevenly spaced. `progressToSplineU` maps normalized progress piecewise across spline segments, guaranteeing exact $0.000\text{m}$ accuracy at all authored waypoints and validation shots while maintaining $C^1$ trajectory smoothness.
+3. **Throttled React State Synchronization:**
+   High-frequency frame updates are held in mutable `CameraRig` references. Zustand store updates (`setCinematicProgress`) are throttled to visible threshold changes ($\Delta \ge 0.005$) and endpoint arrivals, eliminating 60Hz React component re-rendering cascades in `ViewportHUD`.
+4. **State Change Debouncing:**
    The camera state machine (`getStateAtProgress`) checks if the state string has transitioned before updating store state, eliminating redundant re-renders.
 
 ---
@@ -123,7 +127,9 @@ In `src/3d/scene/ArchitecturalScene.tsx`, the camera system is cleanly integrate
 ## 5. Verification Results
 
 All modules pass automated and mathematical validation via `scripts/verify-camera-system.mjs`:
+- Exact Waypoint Match: All 7 waypoints evaluated at their authored progress evaluate to the exact authored coordinates ($0.0000\text{m}$ error).
 - Ground clearance check: Minimum spline elevation is $1.59\text{m}$ (well above safety boundary $1.45\text{m}$).
 - Monotonic progression: All 7 waypoints progress monotonically from $0.00$ to $1.00$.
 - Lens validation: All focal lengths remain between $48^\circ$ and $56^\circ$ ($40\text{mm}$ to $28\text{mm}$ full-frame equivalent).
+- Level-horizon orientation: $0.0^\circ$ roll enforced across all trajectory points.
 - Door mechanics: Smooth cubic Hermite rotation from $0.0^\circ \to -85.0^\circ$ between $Z = 4.5\text{m}$ and $Z = 2.2\text{m}$.

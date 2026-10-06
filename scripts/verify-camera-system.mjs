@@ -127,32 +127,80 @@ const targetVectors = EXTERIOR_WAYPOINTS.map((w) => new THREE.Vector3(...w.targe
 const positionSpline = new THREE.CatmullRomCurve3(posVectors, false, 'centripetal', 0.5);
 const targetSpline = new THREE.CatmullRomCurve3(targetVectors, false, 'centripetal', 0.5);
 
-const tempPos = new THREE.Vector3();
-const tempTarget = new THREE.Vector3();
+function progressToSplineU(progress) {
+  const p = Math.max(0, Math.min(1, progress));
+  const n = EXTERIOR_WAYPOINTS.length;
+  if (n <= 1) return 0;
+  if (p <= EXTERIOR_WAYPOINTS[0].progress) return 0;
+  if (p >= EXTERIOR_WAYPOINTS[n - 1].progress) return 1;
+
+  for (let i = 0; i < n - 1; i++) {
+    const p0 = EXTERIOR_WAYPOINTS[i].progress;
+    const p1 = EXTERIOR_WAYPOINTS[i + 1].progress;
+    if (p >= p0 && p <= p1) {
+      const segT = (p - p0) / (p1 - p0);
+      const u0 = i / (n - 1);
+      const u1 = (i + 1) / (n - 1);
+      return u0 + segT * (u1 - u0);
+    }
+  }
+  return 1;
+}
+
+function evaluatePosition(p, out) {
+  const u = progressToSplineU(p);
+  positionSpline.getPoint(u, out);
+}
+
+function evaluateTarget(p, out) {
+  const u = progressToSplineU(p);
+  targetSpline.getPoint(u, out);
+}
+
+// 3a. Waypoint Exact Match Verification (0.001m tolerance)
+const testPos = new THREE.Vector3();
+const testTarget = new THREE.Vector3();
+
+for (let i = 0; i < EXTERIOR_WAYPOINTS.length; i++) {
+  const wp = EXTERIOR_WAYPOINTS[i];
+  evaluatePosition(wp.progress, testPos);
+  evaluateTarget(wp.progress, testTarget);
+
+  const expectedPos = new THREE.Vector3(...wp.position);
+  const expectedTarget = new THREE.Vector3(...wp.target);
+
+  const posDist = testPos.distanceTo(expectedPos);
+  const targetDist = testTarget.distanceTo(expectedTarget);
+
+  assert(
+    posDist < 0.001,
+    `Waypoint ${wp.id} (p=${wp.progress}) evaluated position matches authored position within 0.001m (err: ${posDist.toFixed(4)}m)`
+  );
+  assert(
+    targetDist < 0.001,
+    `Waypoint ${wp.id} (p=${wp.progress}) evaluated target matches authored target within 0.001m (err: ${targetDist.toFixed(4)}m)`
+  );
+}
+
+// 3b. Dense Path Safety Boundary Sampling
 let minSampleY = Infinity;
 let maxSampleY = -Infinity;
-let maxAcceleration = 0;
-let prevVelocity = new THREE.Vector3();
+let minSampleZ = Infinity;
+let maxSampleZ = -Infinity;
+let maxSampleAbsX = 0;
 
-for (let s = 0; s <= 100; s++) {
-  const p = s / 100;
-  positionSpline.getPointAt(p, tempPos);
-  targetSpline.getPointAt(p, tempTarget);
+for (let s = 0; s <= 200; s++) {
+  const p = s / 200;
+  evaluatePosition(p, testPos);
 
-  minSampleY = Math.min(minSampleY, tempPos.y);
-  maxSampleY = Math.max(maxSampleY, tempPos.y);
+  minSampleY = Math.min(minSampleY, testPos.y);
+  maxSampleY = Math.max(maxSampleY, testPos.y);
+  minSampleZ = Math.min(minSampleZ, testPos.z);
+  maxSampleZ = Math.max(maxSampleZ, testPos.z);
+  maxSampleAbsX = Math.max(maxSampleAbsX, Math.abs(testPos.x));
 
-  if (s > 0) {
-    const tangent = positionSpline.getTangentAt(p);
-    if (s > 1) {
-      const accel = tangent.clone().sub(prevVelocity).length() * 100; // normalized delta
-      maxAcceleration = Math.max(maxAcceleration, accel);
-    }
-    prevVelocity.copy(tangent);
-  }
-
-  if (tempPos.y < BOUNDARIES.minY) {
-    assert(false, `Progress ${p.toFixed(2)}: Camera Y (${tempPos.y.toFixed(2)}m) below ground clearance (${BOUNDARIES.minY}m)`);
+  if (testPos.y < BOUNDARIES.minY) {
+    assert(false, `Progress ${p.toFixed(3)}: Camera Y (${testPos.y.toFixed(2)}m) below ground clearance (${BOUNDARIES.minY}m)`);
   }
 }
 
@@ -163,6 +211,14 @@ assert(
 assert(
   maxSampleY <= BOUNDARIES.maxY,
   `Maximum spline height (${maxSampleY.toFixed(2)}m) stays within altitude boundary (${BOUNDARIES.maxY}m)`
+);
+assert(
+  maxSampleAbsX <= BOUNDARIES.maxX,
+  `Maximum lateral excursion (${maxSampleAbsX.toFixed(2)}m) stays within boundary (${BOUNDARIES.maxX}m)`
+);
+assert(
+  minSampleZ >= BOUNDARIES.minZ && maxSampleZ <= BOUNDARIES.maxZ,
+  `Depth interval [${minSampleZ.toFixed(2)}m, ${maxSampleZ.toFixed(2)}m] within bounds [${BOUNDARIES.minZ}m, ${BOUNDARIES.maxZ}m]`
 );
 
 // 4. State Machine Transition Verification

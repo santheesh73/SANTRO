@@ -3,15 +3,12 @@
 import React from 'react';
 import { QualitySelector } from './QualitySelector';
 import { useHouseStore } from '@/3d/state/useHouseStore';
-import { REFERENCE_CAMERA_LIST, REFERENCE_CAMERAS } from '@/3d/camera/referenceCameras';
+import { REFERENCE_CAMERA_LIST } from '@/3d/camera/referenceCameras';
 import { VALIDATION_SHOT_LIST } from '@/3d/camera/CameraValidationShots';
 import { MaterialDisplayMode } from '@/3d/materials/types';
 import { TimeOfDayPreset, LightingDebugSolo } from '@/3d/lighting/types';
 import { LIGHTING_PRESETS } from '@/3d/lighting/LightingPresets';
 import {
-  Compass,
-  Box,
-  Video,
   Camera,
   Layers,
   Palette,
@@ -83,7 +80,6 @@ export function ViewportHUD() {
   const lightingDebugSolo = useHouseStore((state) => state.lightingDebugSolo);
   const setLightingDebugSolo = useHouseStore((state) => state.setLightingDebugSolo);
 
-  const activeConfig = activeRefCamera ? REFERENCE_CAMERAS[activeRefCamera] : null;
   const activePreset = LIGHTING_PRESETS[timeOfDay] ?? LIGHTING_PRESETS.golden_hour;
 
   return (
@@ -109,7 +105,10 @@ export function ViewportHUD() {
       </div>
 
       {/* Middle Validation Indicator & Control Bars */}
-      <div className="flex flex-col gap-2.5 self-start pointer-events-auto max-h-[82vh] overflow-y-auto pr-2">
+      <div
+        data-prevent-scroll
+        className="flex flex-col gap-2.5 self-start pointer-events-auto max-h-[82vh] overflow-y-auto pr-2"
+      >
         {/* M6 Exterior Cinematic Camera Scrubber & Validation Toolbar */}
         <div className="flex flex-col gap-2 bg-black/60 backdrop-blur-md border border-cyan-500/30 p-3 rounded shadow-xl max-w-sm md:max-w-md">
           <div className="flex items-center justify-between text-[10px] text-neutral-300 font-semibold tracking-wider uppercase">

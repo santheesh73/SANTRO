@@ -12,7 +12,6 @@ import * as THREE from 'three';
 
 // Global reusable math primitives — 0 garbage collection pressure per frame
 const _tempPos = new THREE.Vector3();
-const _tempTarget = new THREE.Vector3();
 const _forward = new THREE.Vector3();
 const _right = new THREE.Vector3();
 const _up = new THREE.Vector3(0, 1, 0);

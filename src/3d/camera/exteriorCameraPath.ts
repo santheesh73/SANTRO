@@ -144,14 +144,42 @@ export function getStateAtProgress(progress: number): ExteriorCameraState {
 }
 
 /**
+ * Maps normalized journey progress p in [0.0, 1.0] to Catmull-Rom spline curve parameter u in [0.0, 1.0].
+ *
+ * CatmullRomCurve3 with N points defines N-1 segments where waypoint i is located at u = i / (N - 1).
+ * By mapping progress piecewise between authored waypoints, each waypoint evaluates to its EXACT
+ * authored 3D position and look target at its specified progress value (0.000m error),
+ * while preserving smooth C^1 continuous Catmull-Rom trajectory throughout.
+ */
+export function progressToSplineU(progress: number): number {
+  const p = Math.max(0, Math.min(1, progress));
+  const n = EXTERIOR_WAYPOINTS.length;
+  if (n <= 1) return 0;
+  if (p <= EXTERIOR_WAYPOINTS[0].progress) return 0;
+  if (p >= EXTERIOR_WAYPOINTS[n - 1].progress) return 1;
+
+  for (let i = 0; i < n - 1; i++) {
+    const p0 = EXTERIOR_WAYPOINTS[i].progress;
+    const p1 = EXTERIOR_WAYPOINTS[i + 1].progress;
+    if (p >= p0 && p <= p1) {
+      const segT = (p - p0) / (p1 - p0);
+      const u0 = i / (n - 1);
+      const u1 = (i + 1) / (n - 1);
+      return u0 + segT * (u1 - u0);
+    }
+  }
+  return 1;
+}
+
+/**
  * Evaluates the 3D camera position along the authored spline
  */
 export function evaluateCameraPosition(
   progress: number,
   outVector: THREE.Vector3
 ): void {
-  const p = Math.max(0, Math.min(1, progress));
-  exteriorPositionSpline.getPointAt(p, outVector);
+  const u = progressToSplineU(progress);
+  exteriorPositionSpline.getPoint(u, outVector);
 }
 
 /**
@@ -161,8 +189,8 @@ export function evaluateCameraTarget(
   progress: number,
   outVector: THREE.Vector3
 ): void {
-  const p = Math.max(0, Math.min(1, progress));
-  exteriorTargetSpline.getPointAt(p, outVector);
+  const u = progressToSplineU(progress);
+  exteriorTargetSpline.getPoint(u, outVector);
 }
 
 /**
