@@ -8,4 +8,5 @@ export * from './InteriorLights';
 export * from './PoolLighting';
 export * from './ArchitecturalLights';
 export * from './LightingSystem';
+export * from './LightingDebug';
 export * from './SceneLighting';

@@ -266,6 +266,18 @@ export function applyArchitecturalMaterials(
     }
     const matName = mesh.userData.originalMaterialName as string;
 
+    const isTransmissive =
+      matName === 'MAT_Glass_Clear' ||
+      matName === 'MAT_Glass_Dark' ||
+      matName === 'MAT_Water' ||
+      mesh.name.toLowerCase().includes('glazing') ||
+      mesh.name.toLowerCase().includes('glass') ||
+      mesh.name.toLowerCase().includes('water');
+
+    if (isTransmissive) {
+      mesh.castShadow = false;
+    }
+
     switch (mode) {
       case 'clay':
         if (matName === 'MAT_Glass_Clear' || matName === 'MAT_Glass_Dark') {

@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useEffect } from 'react';
-import { useThree } from '@react-three/fiber';
+import React from 'react';
+import { useThree, useFrame } from '@react-three/fiber';
+import * as THREE from 'three';
 import { useHouseStore } from '@/3d/state/useHouseStore';
 import { LIGHTING_PRESETS } from './LightingPresets';
 import { SunLight } from './SunLight';
@@ -10,18 +11,25 @@ import { EntranceLights } from './EntranceLights';
 import { InteriorLights } from './InteriorLights';
 import { PoolLighting } from './PoolLighting';
 import { ArchitecturalLights } from './ArchitecturalLights';
+import { LightingDebug } from './LightingDebug';
 
 /**
- * Dynamically synchronizes renderer tone mapping exposure with the active lighting preset.
+ * Dynamically synchronizes renderer tone mapping exposure with the active lighting preset,
+ * smoothly damping exposure across Time-of-Day transitions for cinematic ocular adaptation.
  */
 function ToneMappingExposureController({ exposure }: { exposure: number }) {
   const { gl } = useThree();
 
-  useEffect(() => {
+  useFrame((_, delta) => {
     if (gl) {
-      gl.toneMappingExposure = exposure;
+      gl.toneMappingExposure = THREE.MathUtils.damp(
+        gl.toneMappingExposure,
+        exposure,
+        6.0,
+        Math.min(delta, 0.1)
+      );
     }
-  }, [gl, exposure]);
+  });
 
   return null;
 }
@@ -36,8 +44,9 @@ function ToneMappingExposureController({ exposure }: { exposure: number }) {
  * - Interior Lights (corridor, workspace, atrium cove, plinth toe-kick)
  * - Pool Lighting (aquamarine submerged fixtures and weir rim)
  * - Architectural Lights (cantilever soffit reveals and retaining wall)
- * - Tone mapping exposure management per Time-of-Day preset
+ * - Tone mapping exposure management per Time-of-Day preset with smooth iris damping
  * - Developer isolation debug modes ('all', 'sun_only', 'env_only', 'interior_only')
+ * - LightingDebug fixture and helper visualization
  */
 export function LightingSystem() {
   const timeOfDay = useHouseStore((state) => state.timeOfDay);
@@ -66,7 +75,7 @@ export function LightingSystem() {
 
   return (
     <group name="LightingSystem_Master">
-      {/* 1. ACES Filmic Tone Mapping Exposure Synchronization */}
+      {/* 1. ACES Filmic Tone Mapping Exposure Synchronization & Smooth Iris Damping */}
       <ToneMappingExposureController exposure={preset.exposure} />
 
       {/* 2. Primary Directional Sunlight & Shadows */}
@@ -86,6 +95,10 @@ export function LightingSystem() {
 
       {/* 7. Cantilever Soffits & Concrete Retaining Wall Accent Lighting */}
       {showArch && <ArchitecturalLights config={preset.architectural} />}
+
+      {/* 8. Developer Lighting Debug Helpers */}
+      <LightingDebug />
     </group>
   );
 }
+

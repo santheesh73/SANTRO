@@ -1,6 +1,7 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import { useHouseStore } from '@/3d/state/useHouseStore';
 import { LIGHTING_PRESETS } from '@/3d/lighting/LightingPresets';
@@ -24,6 +25,7 @@ interface AtmosphereProps {
  * - INTERIOR: Calm evening exterior envelope focusing spatial focus inside
  */
 export function Atmosphere(props: AtmosphereProps) {
+  const { scene } = useThree();
   const timeOfDay = useHouseStore((state) => state.timeOfDay);
   const preset = LIGHTING_PRESETS[timeOfDay] ?? LIGHTING_PRESETS.golden_hour;
   const atmosConfig = preset.atmosphere;
@@ -34,13 +36,21 @@ export function Atmosphere(props: AtmosphereProps) {
   const activeGroundColor = props.horizonGroundColor ?? atmosConfig.horizonGroundColor;
   const activeGroundRoughness = props.groundRoughness ?? atmosConfig.groundRoughness;
 
+  // Direct scene synchronization ensuring immediate response across all preset changes
+  useEffect(() => {
+    if (scene) {
+      scene.background = new THREE.Color(activeSky);
+      scene.fog = new THREE.FogExp2(activeFogColor, activeFogDensity);
+    }
+  }, [scene, activeSky, activeFogColor, activeFogDensity]);
+
   return (
     <group name="Atmosphere">
       {/* Dynamic Sky Background Color */}
-      <color attach="background" args={[activeSky]} />
+      <color attach="background" args={[activeSky]} key={activeSky} />
 
       {/* Subtle Depth Atmospheric Horizon Fog */}
-      <fogExp2 attach="fog" args={[activeFogColor, activeFogDensity]} />
+      <fogExp2 attach="fog" args={[activeFogColor, activeFogDensity]} key={`${activeFogColor}_${activeFogDensity}`} />
 
       {/* Distant Ground Horizon Disc (at site grade Y = -1.8m beneath foundation plinth) */}
       <mesh

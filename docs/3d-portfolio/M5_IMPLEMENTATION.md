@@ -44,6 +44,7 @@ src/3d/lighting/
 ├── PoolLighting.tsx           # Submerged aquamarine pool luminaires and weir rim grazing
 ├── ArchitecturalLights.tsx    # Cantilever soffit reveal washers and retaining wall grazer
 ├── LightingSystem.tsx         # Master orchestrator component with ACES exposure controller
+├── LightingDebug.tsx          # Developer fixture & shadow camera debug visualizer
 ├── SceneLighting.tsx          # Backwards-compatible drop-in entry point
 └── index.ts                   # Barrel export
 

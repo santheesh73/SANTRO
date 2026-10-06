@@ -82,7 +82,16 @@ function GLTFModelInstance({
     clone.traverse((child) => {
       if ((child as THREE.Mesh).isMesh) {
         const mesh = child as THREE.Mesh;
-        mesh.castShadow = castShadow;
+        const matName = (mesh.material as THREE.Material)?.name || '';
+        const isTransmissive =
+          matName === 'MAT_Glass_Clear' ||
+          matName === 'MAT_Glass_Dark' ||
+          matName === 'MAT_Water' ||
+          mesh.name.toLowerCase().includes('glazing') ||
+          mesh.name.toLowerCase().includes('glass') ||
+          mesh.name.toLowerCase().includes('water');
+
+        mesh.castShadow = isTransmissive ? false : castShadow;
         mesh.receiveShadow = receiveShadow;
       }
     });

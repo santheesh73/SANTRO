@@ -1,6 +1,7 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
+import * as THREE from 'three';
 import { EntranceLightingConfig } from './types';
 import { LIGHT_FIXTURE_POSITIONS } from './LightingConfig';
 
@@ -13,17 +14,26 @@ interface EntranceLightsProps {
  *
  * Establishes the primary transition from exterior landscape into interior foyer:
  * - Soffit downlight washes the horizontal walnut planks of the pivot door
+ * - Downlight target explicitly bound and registered in the scene graph
  * - Integrated vertical cyan LED channel on the door pull illuminates threshold
  * - Subtle ground bounce highlights the honed cream limestone entrance slab
  */
 export function EntranceLights({ config }: EntranceLightsProps) {
+  const [soffitTarget] = useState(() => {
+    const obj = new THREE.Object3D();
+    obj.name = 'Entrance_Soffit_Target';
+    obj.position.set(0.15, 0.0, 0.35);
+    return obj;
+  });
+
   return (
     <group name="EntranceLights">
       {/* 1. Recessed Soffit Downlight above Pivot Door */}
+      <primitive object={soffitTarget} />
       <spotLight
         name="Entrance_Soffit_Downlight"
         position={LIGHT_FIXTURE_POSITIONS.entranceSoffitDownlight}
-        target-position={[0.15, 0.0, 0.35]}
+        target={soffitTarget}
         intensity={config.soffitDownlightIntensity}
         color={config.soffitDownlightColor}
         angle={Math.PI / 3.5}
@@ -54,3 +64,4 @@ export function EntranceLights({ config }: EntranceLightsProps) {
     </group>
   );
 }
+

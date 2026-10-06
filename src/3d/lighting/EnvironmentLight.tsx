@@ -20,7 +20,9 @@ export function EnvironmentLight({ config }: EnvironmentLightProps) {
     <group name="EnvironmentLight">
       {/* Sky Azure to Travertine Ground Hemisphere */}
       <hemisphereLight
-        args={[config.hemiSkyColor, config.hemiGroundColor, config.hemiIntensity]}
+        color={config.hemiSkyColor}
+        groundColor={config.hemiGroundColor}
+        intensity={config.hemiIntensity}
         position={[0, 50, 0]}
       />
 
