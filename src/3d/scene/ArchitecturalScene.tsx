@@ -13,6 +13,7 @@ import { WaterController } from '@/3d/materials/WaterController';
 import { MaterialPreviewScene } from '@/3d/materials/MaterialPreviewScene';
 import { getDefaultHouseModelUrl } from '@/3d/assets/config';
 import { useHouseStore } from '@/3d/state/useHouseStore';
+import { RoomSystem } from '@/3d/rooms/RoomSystem';
 
 interface ArchitecturalSceneProps {
   modelUrl?: string | null;
@@ -71,6 +72,9 @@ export function ArchitecturalScene({
           )}
         </Suspense>
       )}
+
+      {/* 7. M8 Spatial Portfolio Room System & Content Exhibits */}
+      {!showMaterialPreview && <RoomSystem />}
     </>
   );
 }

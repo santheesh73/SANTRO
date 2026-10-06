@@ -8,6 +8,7 @@ import { VALIDATION_SHOT_LIST } from '@/3d/camera/CameraValidationShots';
 import { MaterialDisplayMode } from '@/3d/materials/types';
 import { TimeOfDayPreset, LightingDebugSolo } from '@/3d/lighting/types';
 import { LIGHTING_PRESETS } from '@/3d/lighting/LightingPresets';
+import { ROOM_REGISTRY } from '@/3d/rooms/RoomRegistry';
 import {
   Camera,
   Layers,
@@ -51,6 +52,8 @@ const LIGHTING_SOLOS: { id: LightingDebugSolo; label: string }[] = [
 export function ViewportHUD() {
   const qualityTier = useHouseStore((state) => state.qualityTier);
   const currentZone = useHouseStore((state) => state.currentZone);
+  const currentRoomId = useHouseStore((state) => state.currentRoomId);
+  const activeRoom = ROOM_REGISTRY[currentRoomId] ?? ROOM_REGISTRY['exterior'];
   const activeRefCamera = useHouseStore((state) => state.activeRefCamera);
   const setActiveRefCamera = useHouseStore((state) => state.setActiveRefCamera);
 
@@ -91,10 +94,10 @@ export function ViewportHUD() {
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
             <span>SANTRO</span>
             <span className="text-neutral-500 font-normal">|</span>
-            <span className="text-neutral-300 font-normal">M7 CONTINUOUS CINEMATIC CAMERA JOURNEY</span>
+            <span className="text-neutral-300 font-normal">M8 PORTFOLIO ROOMS & SPATIAL EXHIBITIONS</span>
           </div>
           <span className="text-[10px] tracking-[0.15em] text-neutral-400 uppercase">
-            THE PORTFOLIO HOUSE • EXTERIOR APPROACH, DOOR THRESHOLD, FOYER & ATRIUM CORE
+            THE PORTFOLIO HOUSE • 10 SEQUENCED ARCHITECTURAL ROOMS & SPATIAL EXHIBITS
           </span>
         </div>
 
@@ -118,6 +121,14 @@ export function ViewportHUD() {
             </div>
             <span className="text-cyan-300 font-bold">
               {(cinematicProgress * 100).toFixed(1)}%
+            </span>
+          </div>
+
+          {/* Active Portfolio Room Badge */}
+          <div className="flex items-center justify-between text-[9px] bg-cyan-950/40 px-2 py-1 rounded border border-cyan-500/30">
+            <span className="text-cyan-400 font-bold">ROOM {String(activeRoom.order).padStart(2, '0')}:</span>
+            <span className="text-white font-semibold tracking-wider truncate max-w-[260px]">
+              {activeRoom.name.toUpperCase()} • {activeRoom.purpose.toUpperCase()}
             </span>
           </div>
 

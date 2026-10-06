@@ -5,6 +5,7 @@ import { ReferenceCameraId } from '@/3d/camera/referenceCameras';
 import { MaterialDisplayMode } from '@/3d/materials/types';
 import { TimeOfDayPreset, LightingDebugSolo } from '@/3d/lighting/types';
 import { CameraJourneyState } from '@/3d/camera/types';
+import { RoomId } from '@/3d/rooms/types';
 
 export type CameraMode = 'cinematic' | 'inspect' | 'free' | 'spline';
 
@@ -18,6 +19,7 @@ export interface HouseState {
   activeValidationShotId: string | null;
   showCameraSplineDebug: boolean;
   currentZone: SpatialZone;
+  currentRoomId: RoomId;
 
   // Camera & Interaction
   cameraMode: CameraMode;
@@ -57,6 +59,7 @@ export interface HouseState {
   setShowCameraSplineDebug: (show: boolean) => void;
   setCameraMode: (mode: CameraMode) => void;
   navigateToZone: (zone: SpatialZone) => void;
+  setCurrentRoom: (roomId: RoomId) => void;
   setActiveRefCamera: (camId: ReferenceCameraId | null) => void;
   enterInspectMode: (targetId: string) => void;
   exitInspectMode: () => void;
@@ -84,6 +87,7 @@ export const useHouseStore = create<HouseState>((set) => ({
   activeValidationShotId: 'shot_01',
   showCameraSplineDebug: false,
   currentZone: 'EXTERIOR',
+  currentRoomId: 'exterior',
 
   cameraMode: 'cinematic',
   activeRefCamera: null,
@@ -159,6 +163,11 @@ export const useHouseStore = create<HouseState>((set) => ({
   navigateToZone: (zone) =>
     set({
       currentZone: zone,
+    }),
+
+  setCurrentRoom: (roomId) =>
+    set({
+      currentRoomId: roomId,
     }),
 
   setActiveRefCamera: (camId) =>
