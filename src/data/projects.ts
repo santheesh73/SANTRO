@@ -13,7 +13,7 @@ export const projectsData: ProjectData[] = verifiedProjects.map((p) => ({
   role: p.role,
   technologies: p.technologies,
   summary: p.shortDescription,
-  highlights: p.highlights,
+  highlights: p.highlights ?? p.keyCapabilities ?? [],
   metrics: p.metrics,
   accentColor: p.accentColor,
   githubUrl: p.githubUrl,

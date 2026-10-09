@@ -1,46 +1,46 @@
 import { SkillDomain } from './types';
 
 /**
- * SANTRO M8 — Centralized Verified Engineering Skills
+ * SANTRO M10 — Centralized Verified Engineering Skills
  *
- * Strictly grouped by domain matching M8 Specification Section 19:
- * LANGUAGES, FRONTEND, BACKEND, DATA, AI, INFRASTRUCTURE.
+ * Strictly grouped by domain matching M10 Specification Section 11:
+ * - Programming
+ * - Frontend
+ * - Backend and data
+ * - AI and intelligent applications
+ * - Development and deployment
+ *
+ * Zero fabricated proficiency scores or percentage bars.
  */
 export const skillsData: SkillDomain[] = [
   {
-    id: 'languages',
-    name: 'LANGUAGES',
-    description: 'Core programming languages for distributed systems, web architectures, and data engineering.',
-    skills: ['Python', 'TypeScript', 'JavaScript', 'SQL'],
+    id: 'programming',
+    name: 'PROGRAMMING',
+    description: 'Core languages for systems development, data processing, and application engineering.',
+    skills: ['Python', 'JavaScript', 'TypeScript', 'SQL'],
   },
   {
     id: 'frontend',
     name: 'FRONTEND',
-    description: 'Component architecture, reactive client rendering, and high-performance user interfaces.',
+    description: 'Modern component-driven web user interfaces and interactive client-side architectures.',
     skills: ['React', 'Next.js'],
   },
   {
-    id: 'backend',
-    name: 'BACKEND',
-    description: 'Asynchronous API servers, microservices, and high-throughput networking contracts.',
-    skills: ['FastAPI', 'REST APIs'],
+    id: 'backend-data',
+    name: 'BACKEND AND DATA',
+    description: 'High-throughput APIs, relational storage, caching layers, and database management.',
+    skills: ['FastAPI', 'PostgreSQL', 'Supabase', 'Redis'],
   },
   {
-    id: 'data',
-    name: 'DATA',
-    description: 'Relational data modeling, vector embeddings, and ultra-low-latency in-memory caches.',
-    skills: ['PostgreSQL', 'Supabase', 'Redis'],
+    id: 'ai-intelligent',
+    name: 'AI & INTELLIGENT APPLICATIONS',
+    description: 'Generative models, retrieval augmentation, reasoning pipelines, and language understanding.',
+    skills: ['Generative AI', 'Large Language Models (LLMs)', 'Retrieval-Augmented Generation (RAG)', 'Natural Language Processing (NLP)'],
   },
   {
-    id: 'ai',
-    name: 'AI & MACHINE LEARNING',
-    description: 'Foundation models, retrieval-augmented generation, agent loops, and language processing.',
-    skills: ['Generative AI', 'LLMs', 'RAG', 'NLP'],
-  },
-  {
-    id: 'infrastructure',
-    name: 'INFRASTRUCTURE',
-    description: 'Reproducible containerization, edge deployment, and cloud developer operations.',
+    id: 'dev-deployment',
+    name: 'DEVELOPMENT & DEPLOYMENT',
+    description: 'Containerization, reproducible deployment, and developer workflow tooling.',
     skills: ['Docker'],
   },
 ];

@@ -1,23 +1,32 @@
 import { ProfileData } from './types';
 
 /**
- * SANTRO M8 — Verified Profile & About Content
- * Source: M8 Specification Section 8 & Predecessor Verified Records
+ * SANTRO M10 — Verified Profile & Identity Data
+ *
+ * Source: Verified predecessor records & M10 Section 6 guidelines.
+ * No fabricated employment or client claims.
  */
 export const profileData: ProfileData = {
   name: 'SANTHEESH S',
-  title: 'AI Software Engineer & Full-Stack Developer',
+  title: 'AI Software Engineer | Full-Stack Developer | Generative AI Enthusiast',
   role: 'AI Software Engineer',
   disciplines: [
     'AI Software Engineer',
     'Full-Stack Developer',
     'Generative AI Enthusiast',
   ],
-  tagline: 'Designing high-performance intelligent systems and immersive spatial computing experiences.',
-  bio: 'Specializing in generative AI architectures, distributed low-latency inference pipelines, and real-time WebGL/3D spatial environments. Bridging complex machine learning systems with uncompromising aesthetic interaction.',
-  location: 'Bengaluru, India',
+  tagline:
+    'Building calm, precise, production-quality software with modern AI engineering.',
+  bio:
+    'AI Software Engineer and Full-Stack Developer specializing in generative AI systems, on-device model architectures, and real-time interactive web applications. Focused on engineering clear, reliable software from first principles.',
+  education: {
+    degree: 'B.Tech — Artificial Intelligence and Data Science',
+    institution: 'Sri Shakthi Institute of Engineering and Technology',
+    expectedGraduation: '2029',
+  },
+  location: 'Bengaluru / Coimbatore, India',
   foyerHeadline: 'SANTHEESH S',
   foyerSubheadline: 'AI Software Engineer • Full-Stack Developer • Generative AI Enthusiast',
   foyerStatement:
-    'Designing high-performance intelligent systems, on-device AI inference pipelines, and real-time spatial computing environments.',
+    'Designing intelligent software systems, on-device inference architectures, and high-performance full-stack web applications.',
 };

@@ -70,7 +70,7 @@ export function ArchiveExhibit({
 
           ctx.fillStyle = '#8E8E93';
           ctx.font = '10px monospace';
-          ctx.fillText('VERIFIED IMPACT //', 50, metricY + 18);
+          ctx.fillText('VERIFIED RECORD //', 50, metricY + 18);
 
           ctx.fillStyle = '#F59E0B';
           ctx.font = 'bold 14px monospace';

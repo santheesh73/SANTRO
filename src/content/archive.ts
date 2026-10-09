@@ -1,49 +1,59 @@
 import { ArchiveRecord } from './types';
 
 /**
- * SANTRO M8 — Centralized Verified Archive & Proof Records
+ * SANTRO M10 — Centralized Verified Archive & Proof Records
  *
- * Matching M8 Specification Section 20 & verified hackathon/open-source milestones.
+ * Matching M10 Specification Section 12.
+ * Only verified hackathons, project developments, and open-source contributions.
+ * Zero fabricated awards, rankings, certificates, or unverified claims.
  */
 export const archiveData: ArchiveRecord[] = [
   {
     id: 'proof-sih',
-    title: 'Smart India Hackathon (SIH) National Finalist & Winner',
+    title: 'Smart India Hackathon 2026',
     organization: 'Ministry of Agriculture & SIH Organization',
-    year: '2023',
-    award: 'National Winner / Finalist',
+    year: '2026',
+    category: 'hackathon',
     description:
-      'Engineered BHOOMI: Multispectral satellite agricultural intelligence command center analyzing regional crop stress, soil moisture, and yield indices.',
-    metric: '120,000 km² Coverage',
+      'Engineered BHOOMI: Agricultural advisory ecosystem combining Leaflet outbreak hotspot mapping, regional crop filters, and an agronomist verification queue.',
+    verificationNote: 'Hackathon project participation and prototype development (SIH 2026).',
+    award: 'Hackathon Project Submission',
+    metric: 'Spatial Hotspot Portal',
   },
   {
-    id: 'proof-ai-summit',
-    title: 'National AI Hackathon Finalist',
-    organization: 'AI Innovation Summit',
-    year: '2024',
-    award: 'Top 5 Finalist (1,200+ Teams)',
+    id: 'proof-osdhack',
+    title: 'OSDHack 2026',
+    organization: 'Open Source Community',
+    year: '2026',
+    category: 'hackathon',
     description:
-      'Engineered an autonomous multimodal emergency response triage agent using local edge models and real-time computer vision streaming.',
-    metric: 'Sub-80ms Decision Loop',
+      'Engineered ORION: On-device AI assistant architecture running local model inference directly on user hardware, offline and private by design.',
+    verificationNote: 'Hackathon prototype development (OSDHack 2026).',
+    award: 'Hackathon Prototype',
+    metric: 'Local Offline Inference',
   },
   {
     id: 'proof-opensource',
-    title: 'Open Source Vector Framework Contributor',
-    organization: 'Vector Search Ecosystem',
-    year: '2024',
-    award: 'Core Contributor',
+    title: 'Building in Public',
+    organization: 'GitHub Ecosystem',
+    year: '2024 — Present',
+    category: 'open-source',
     description:
-      'Authored SIMD-optimized distance metric routines and product quantization kernels improving memory bandwidth and query throughput.',
-    metric: '+28% Memory Bandwidth',
+      'Software architectures, intelligent applications, and prototypes maintained in open public repositories with transparent documentation.',
+    verificationNote: 'Public repositories active at github.com/santheesh73.',
+    award: 'Public Code Repositories',
+    metric: 'Open Source Code',
   },
   {
-    id: 'proof-hpc',
-    title: 'High-Performance Computing Excellence Award',
-    organization: 'University Engineering Consortium',
-    year: '2023',
-    award: 'First Place',
+    id: 'proof-milestones',
+    title: 'Systems Architecture Milestones',
+    organization: 'Independent Project Development',
+    year: '2024 — 2026',
+    category: 'milestone',
     description:
-      'Designed a GPU-accelerated distributed raymarching visualizer achieving 60fps at 4K resolution with custom HLSL/GLSL compute kernels.',
-    metric: 'Locked 60fps @ 4K',
+      'Shipped core architectural foundations across on-device privacy inference, streaming media caching, and containerized multimodal generation.',
+    verificationNote: 'Verified architectures in ORION, HEARTTUNE, and NISF.',
+    award: 'Verified Architectures',
+    metric: 'Production Patterns',
   },
 ];

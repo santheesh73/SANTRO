@@ -1,8 +1,9 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { QualitySelector } from './QualitySelector';
 import { useHouseStore } from '@/3d/state/useHouseStore';
+import { projectsData } from '@/content/projects';
 import { REFERENCE_CAMERA_LIST } from '@/3d/camera/referenceCameras';
 import { VALIDATION_SHOT_LIST } from '@/3d/camera/CameraValidationShots';
 import { MaterialDisplayMode } from '@/3d/materials/types';
@@ -71,13 +72,20 @@ export function ViewportHUD() {
   const isDoorOpen = useHouseStore((state) => state.isDoorOpen);
   const doorAngle = useHouseStore((state) => state.doorAngle);
 
-  // M9 Room Experience
+  // M9 Room Experience & M10 Project Resolution
   const roomExperienceState = useHouseStore((state) => state.roomExperienceState);
+  const activeBeatId = useHouseStore((state) => state.activeBeatId);
   const activeBeatLabel = useHouseStore((state) => state.activeBeatLabel);
   const isInsideRoomExperience = useHouseStore((state) => state.isInsideRoomExperience);
   const localRoomProgress = useHouseStore((state) => state.localRoomProgress);
   const showRoomExperienceDebug = useHouseStore((state) => state.showRoomExperienceDebug);
   const setShowRoomExperienceDebug = useHouseStore((state) => state.setShowRoomExperienceDebug);
+  const openProjectModal = useHouseStore((state) => state.openProjectModal);
+
+  const activeProject = useMemo(() => {
+    if (!activeBeatId) return null;
+    return projectsData.find((p) => activeBeatId.includes(p.id)) || null;
+  }, [activeBeatId]);
 
   // M4 Material System
   const materialMode = useHouseStore((state) => state.materialMode);
@@ -102,10 +110,10 @@ export function ViewportHUD() {
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
             <span>SANTRO</span>
             <span className="text-neutral-500 font-normal">|</span>
-            <span className="text-neutral-300 font-normal">M8 PORTFOLIO ROOMS & SPATIAL EXHIBITIONS</span>
+            <span className="text-neutral-300 font-normal">M10 PORTFOLIO CONTENT & READABILITY</span>
           </div>
           <span className="text-[10px] tracking-[0.15em] text-neutral-400 uppercase">
-            THE PORTFOLIO HOUSE • 10 SEQUENCED ARCHITECTURAL ROOMS & SPATIAL EXHIBITS
+            THE PORTFOLIO HOUSE • 10 SEQUENCED ARCHITECTURAL ROOMS & VERIFIED CONTENT
           </span>
         </div>
 
@@ -151,6 +159,15 @@ export function ViewportHUD() {
                 <div className="text-[8px] text-cyan-300 truncate font-mono">
                   FOCUS: {activeBeatLabel}
                 </div>
+              )}
+              {activeProject && (
+                <button
+                  onClick={() => openProjectModal(activeProject.id)}
+                  className="mt-1 py-1 px-2 rounded bg-cyan-950/80 hover:bg-cyan-900 border border-cyan-400/50 text-cyan-200 text-[8px] font-mono font-semibold flex items-center justify-between transition-colors cursor-pointer"
+                >
+                  <span>INSPECT {activeProject.name} COMPANION</span>
+                  <span className="text-[7.5px] text-cyan-400">OPEN [CLICK] →</span>
+                </button>
               )}
             </div>
           )}

@@ -33,10 +33,10 @@ export function ContactPlinth({
         ctx.fillText(contactData.headline, 40, 115);
 
         // Subtitle / Closing statement
-        ctx.fillStyle = '#A1A1A6';
+        ctx.fillStyle = '#C7C7CC';
         ctx.font = 'normal 15px sans-serif';
         ctx.fillText(
-          'Available for AI systems architecture, on-device models, and spatial computing collaborations.',
+          'Open for software engineering opportunities, intelligent systems, and engineering collaborations.',
           40,
           152
         );

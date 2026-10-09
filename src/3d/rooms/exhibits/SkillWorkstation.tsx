@@ -31,10 +31,10 @@ export function SkillWorkstation() {
 
         // Telemetry Metrics Grid (Top Half)
         const metrics = [
-          { label: 'LOCAL INFERENCE', val: 'SUB-42ms' },
-          { label: 'EGRESS BANDWIDTH', val: '0 KB/s' },
-          { label: 'GPU MEMORY ALLOC', val: '1.2 GB' },
-          { label: 'PIPELINE FPS', val: '60.0 LOCKED' },
+          { label: 'FRONTEND STACK', val: 'REACT / NEXT.JS' },
+          { label: 'BACKEND SERVICES', val: 'FASTAPI / DOCKER' },
+          { label: 'PERSISTENCE', val: 'POSTGRES / REDIS' },
+          { label: 'AI FOUNDATION', val: 'LLMS / RAG' },
         ];
         const cardW = (width - 48 - 3 * 16) / 4;
         metrics.forEach((m, i) => {
@@ -49,7 +49,7 @@ export function SkillWorkstation() {
           ctx.fillText(m.label, cx + 12, 88);
 
           ctx.fillStyle = '#00F0FF';
-          ctx.font = 'bold 15px monospace';
+          ctx.font = 'bold 13px monospace';
           ctx.fillText(m.val, cx + 12, 112);
         });
 
@@ -65,10 +65,10 @@ export function SkillWorkstation() {
 
         // Node sequence boxes
         const nodes = [
-          { name: '1. USER INTENT', sub: 'Natural language stream' },
-          { name: '2. LOCAL AST PARSER', sub: 'Grammar tree & token embedding' },
-          { name: '3. WEBGPU ONNX KERNEL', sub: 'Quantized INT4 weights' },
-          { name: '4. ZERO-COPY STREAM', sub: 'Sub-50ms reactive frame' },
+          { name: '1. USER INTENT', sub: 'Natural language input' },
+          { name: '2. REASONING ENGINE', sub: 'Context & retrieval routing' },
+          { name: '3. MODEL INFERENCE', sub: 'Local or async execution' },
+          { name: '4. REACTIVE UI', sub: 'Client visual state sync' },
         ];
         const nodeW = (width - 96 - 3 * 24) / 4;
         nodes.forEach((node, i) => {
@@ -121,13 +121,13 @@ export function SkillWorkstation() {
 
         // Terminal Log lines
         const lines = [
-          '[INFO] Initializing WebGL 2.0 / WebGPU context with 16x MSAA buffer...',
-          '[PASS] Vector index: 5,000,000 embeddings verified across HNSW graph hierarchy.',
-          '[PASS] Transformer attention layer warmup: 18.2ms latency validated.',
-          '[PASS] Catmull-Rom centripetal camera path continuity: 0.000m maximum error.',
-          '[INFO] Micro-texture PBR budget: 12 normal/roughness assets within VRAM limit.',
-          '[PASS] Spatial rooms registered: 10/10 verified with strict sequence order.',
-          '[LIVE] Listening for user interaction across architectural exhibit bounds...',
+          '[INFO] Initializing WebGL 2.0 / 3D Canvas context with hardware acceleration...',
+          '[PASS] Programming languages: Python, JavaScript, TypeScript, SQL.',
+          '[PASS] Frontend architectures: React, Next.js component system.',
+          '[PASS] Backend & data tier: FastAPI, PostgreSQL, Supabase, Redis.',
+          '[PASS] AI & intelligent models: Generative AI, LLMs, RAG, NLP.',
+          '[PASS] Containerization: Docker reproducible environments.',
+          '[LIVE] Spatial rooms active: 10/10 verified with strict sequence order.',
         ];
 
         lines.forEach((line, i) => {
@@ -168,16 +168,18 @@ export function SkillWorkstation() {
         const rowH = (height - 80 - 2 * 20) / 3;
 
         skillsData.forEach((domain, index) => {
-          const col = index % 2;
+          const isLastOdd = index === skillsData.length - 1 && skillsData.length % 2 === 1;
+          const col = isLastOdd ? 0 : index % 2;
           const row = Math.floor(index / 2);
+          const currentW = isLastOdd ? width - 72 : colW;
           const x = 36 + col * (colW + 32);
           const y = 84 + row * (rowH + 20);
 
           // Domain Card Box
           ctx.fillStyle = '#181B22';
-          ctx.fillRect(x, y, colW, rowH);
+          ctx.fillRect(x, y, currentW, rowH);
           ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
-          ctx.strokeRect(x, y, colW, rowH);
+          ctx.strokeRect(x, y, currentW, rowH);
 
           // Indicator pip
           ctx.fillStyle = '#00F0FF';

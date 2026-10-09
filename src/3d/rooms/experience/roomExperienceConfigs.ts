@@ -254,14 +254,14 @@ export const ROOM_EXPERIENCE_CONFIGS: Record<RoomId, RoomExperienceConfig> = {
         position: [-1.00, 1.60, -11.9],
         target: [-2.60, 1.35, -12.2],
         fov: 56,
-        label: 'ORION // On-Device Privacy-First AI Platform',
+        label: 'ORION // On-Device Assistant — Offline-First & Private',
         state: 'CONTENT_BEAT',
         contentId: 'orion',
         importance: 'primary',
         holdDuration: 0.35,
         description:
-          'Framing the primary monolithic plinth, local WebGPU inference metrics, and zero-server-egress architecture.',
-        focalPoints: ['WebGPU Canvas', 'Local Token Stream', 'Titanium Accent'],
+          'Framing the primary monolithic plinth, local model inference architecture, and zero-server-egress privacy design for OSDHack 2026.',
+        focalPoints: ['On-Device Plinth', 'Local Inference Architecture'],
       },
 
       // 2. PRYSM (Supporting Compact — West Outer Wing)
@@ -272,14 +272,14 @@ export const ROOM_EXPERIENCE_CONFIGS: Record<RoomId, RoomExperienceConfig> = {
         position: [-1.05, 1.60, -12.8],
         target: [-4.50, 1.30, -12.8],
         fov: 58,
-        label: 'PRYSM // Real-Time WebGPU Particle & Visual Compute Engine',
+        label: 'PRYSM // Real-Time Visual & Graphics Exploration',
         state: 'CONTENT_BEAT',
         contentId: 'prysm',
         importance: 'supporting',
         holdDuration: 0.25,
         description:
-          'Framing the 2M particle GPU simulation sandbox, compute shader topologies, and interactive fluid dynamics.',
-        focalPoints: ['GPGPU Particles', 'Compute Shader Topology'],
+          'Framing visual computing exploration, real-time graphics experimentation, and ongoing project specification.',
+        focalPoints: ['Visual Computing Display', 'Shader Exploration'],
       },
 
       // 3. BHOOMI (Supporting Compact — West Outer Mid Wing)
@@ -290,14 +290,14 @@ export const ROOM_EXPERIENCE_CONFIGS: Record<RoomId, RoomExperienceConfig> = {
         position: [-1.05, 1.60, -13.5],
         target: [-4.50, 1.30, -14.6],
         fov: 58,
-        label: 'BHOOMI // SIH National Champion Satellite Crop Intelligence',
+        label: 'BHOOMI // SIH Agricultural Outbreak & Advisory Platform',
         state: 'CONTENT_BEAT',
         contentId: 'bhoomi',
         importance: 'supporting',
         holdDuration: 0.25,
         description:
-          'Framing national championship Smart India Hackathon satellite crop intelligence and Sentinel-2 NDVI raster analysis.',
-        focalPoints: ['Sentinel-2 NDVI Raster', 'SIH Victory Plaque'],
+          'Framing Smart India Hackathon (SIH 2026) agricultural advisory platform, Leaflet outbreak maps, and agronomist verification workflow.',
+        focalPoints: ['Hotspot Map Display', 'Agronomist Workflow Tablet'],
       },
 
       // 4. HEARTTUNE (Selected Plinth — West Mid)
@@ -308,14 +308,14 @@ export const ROOM_EXPERIENCE_CONFIGS: Record<RoomId, RoomExperienceConfig> = {
         position: [-0.80, 1.60, -13.8],
         target: [-2.60, 1.35, -14.2],
         fov: 56,
-        label: 'HEARTTUNE // Emotion-Responsive Audio ML PWA',
+        label: 'HEARTTUNE // Streaming Music Progressive Web App',
         state: 'CONTENT_BEAT',
         contentId: 'hearttune',
         importance: 'secondary',
         holdDuration: 0.3,
         description:
-          'Intimate framing of the biometric audio streaming display and 64-sample buffer offline architecture.',
-        focalPoints: ['Web Audio API Plinth', 'Mood Classifier'],
+          'Framing the progressive web application display, JioSaavn API media integration, and Redis caching architecture.',
+        focalPoints: ['Streaming PWA Plinth', 'API Caching Display'],
       },
 
       // 5. Cross-Atrium Panoramic Balance (Orientation glance)
@@ -326,7 +326,7 @@ export const ROOM_EXPERIENCE_CONFIGS: Record<RoomId, RoomExperienceConfig> = {
         position: [0.0, 1.60, -13.5],
         target: [0.0, 1.50, -18.0],
         fov: 58,
-        label: 'Atrium Central Axis // East Exhibition Wing Glance',
+        label: 'Atrium Central Axis // Longitudinal Spatial Balance',
         state: 'ROOM_INSPECTION',
         importance: 'secondary',
         holdDuration: 0.2,
@@ -343,14 +343,14 @@ export const ROOM_EXPERIENCE_CONFIGS: Record<RoomId, RoomExperienceConfig> = {
         position: [0.80, 1.60, -12.8],
         target: [2.60, 1.35, -12.2],
         fov: 56,
-        label: 'NISF // Vector Critique & Semantic Search Engine',
+        label: 'NISF // Multimodal Creative Content Optimization',
         state: 'CONTENT_BEAT',
         contentId: 'nisf',
         importance: 'secondary',
         holdDuration: 0.3,
         description:
-          'Framing vector critique loops, sub-20ms p99 query latency, and HNSW vector index topology.',
-        focalPoints: ['HNSW Vector Topology', 'Retrieval Metrics'],
+          'Framing multimodal variant generation across text, image, audio, and video with automated critique feedback loops.',
+        focalPoints: ['Variant Evaluation Display', 'FastAPI Backend Architecture'],
       },
 
       // 7. MINCHAL (Supporting Compact — East Outer Wing)
@@ -361,14 +361,14 @@ export const ROOM_EXPERIENCE_CONFIGS: Record<RoomId, RoomExperienceConfig> = {
         position: [0.90, 1.60, -13.2],
         target: [4.50, 1.30, -13.2],
         fov: 58,
-        label: 'MINCHAL // Bilingual Energy OCR & Smart Meter Telemetry',
+        label: 'MINCHAL // Bilingual Appliance Energy Bill Analysis',
         state: 'CONTENT_BEAT',
         contentId: 'minchal',
         importance: 'supporting',
         holdDuration: 0.25,
         description:
-          'Framing accessible electricity OCR breakdown, edge inference model, and bilingual utility meter analysis.',
-        focalPoints: ['Bilingual OCR Display', 'Edge Inference Plinth'],
+          'Framing non-hardware electricity bill analysis, appliance disaggregation, and bilingual Tamil and English support.',
+        focalPoints: ['Bill Photo OCR Display', 'Appliance Breakdown Tablet'],
       },
 
       // 8. AHAL AI (Selected Plinth — East Mid)
@@ -379,14 +379,14 @@ export const ROOM_EXPERIENCE_CONFIGS: Record<RoomId, RoomExperienceConfig> = {
         position: [0.60, 1.60, -13.8],
         target: [2.60, 1.35, -14.2],
         fov: 56,
-        label: 'AHAL AI // Repository & Document Intelligence',
+        label: 'AHAL AI // Repository & Document Software Intelligence',
         state: 'CONTENT_BEAT',
         contentId: 'ahal-ai',
         importance: 'secondary',
         holdDuration: 0.3,
         description:
-          'Framing codebase graph indexing, multi-agent planner loops, and deterministic state transitions.',
-        focalPoints: ['AST Graph Display', 'Agent Planner Tablet'],
+          'Framing codebase analysis, technical document ingestion, and architectural insight generation with Gemma foundation models.',
+        focalPoints: ['Repository Analysis Display', 'Document Intelligence Tablet'],
       },
 
       // 9. Project Studio Culmination & Transition

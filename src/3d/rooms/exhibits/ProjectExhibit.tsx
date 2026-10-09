@@ -70,18 +70,29 @@ export function ProjectExhibit({
         ctx.fillText(
           `${project.year} • ${project.category.toUpperCase()} • ${project.role.toUpperCase()}`,
           60,
-          56
+          54
         );
+
+        // Status Badge in Top Right
+        const statusText = `STATUS: ${project.status.toUpperCase()}`;
+        ctx.font = 'bold 11px monospace';
+        const sWidth = ctx.measureText(statusText).width + 16;
+        ctx.fillStyle = '#1A1D24';
+        ctx.fillRect(width - 40 - sWidth, 36, sWidth, 24);
+        ctx.strokeStyle = project.status === 'prototype' ? 'rgba(0, 240, 255, 0.5)' : 'rgba(255, 255, 255, 0.18)';
+        ctx.strokeRect(width - 40 - sWidth, 36, sWidth, 24);
+        ctx.fillStyle = project.accentColor;
+        ctx.fillText(statusText, width - 40 - sWidth + 8, 52);
 
         // 2. Project Title
         ctx.fillStyle = '#FFFFFF';
-        ctx.font = `bold ${isFeatured ? '40px' : '32px'} sans-serif`;
-        ctx.fillText(project.name, 60, isFeatured ? 104 : 96);
+        ctx.font = `bold ${isFeatured ? '42px' : '34px'} sans-serif`;
+        ctx.fillText(project.name, 60, isFeatured ? 106 : 96);
 
         // 3. Subtitle
         ctx.fillStyle = project.accentColor;
         ctx.font = `500 ${isFeatured ? '18px' : '16px'} sans-serif`;
-        ctx.fillText(project.subtitle, 60, isFeatured ? 134 : 124);
+        ctx.fillText(project.subtitle, 60, isFeatured ? 136 : 124);
 
         // Divider
         ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
@@ -92,7 +103,7 @@ export function ProjectExhibit({
         ctx.stroke();
 
         // 4. Short Description
-        ctx.fillStyle = '#C7C7CC';
+        ctx.fillStyle = '#E5E5EA';
         ctx.font = `normal ${isFeatured ? '16px' : '14px'} sans-serif`;
         const descY = isFeatured ? 185 : 170;
         const lineH = isFeatured ? 26 : 22;
@@ -106,12 +117,13 @@ export function ProjectExhibit({
           3
         );
 
-        // 5. Metrics Cards (Horizontal row)
-        const metricsY = Math.max(endDescY + 30, isFeatured ? 280 : 250);
-        const cardWidth = (width - 80 - (project.metrics.length - 1) * 16) / project.metrics.length;
+        // 5. Verified Attributes Cards (Horizontal row)
+        const displayAttrs = project.attributes || project.metrics || [];
+        const metricsY = Math.max(endDescY + 28, isFeatured ? 280 : 250);
+        const cardWidth = (width - 80 - (displayAttrs.length - 1) * 16) / displayAttrs.length;
         const cardHeight = isFeatured ? 84 : 72;
 
-        project.metrics.forEach((m, idx) => {
+        displayAttrs.forEach((attr, idx) => {
           const cardX = 40 + idx * (cardWidth + 16);
           // Card Box
           ctx.fillStyle = '#181A20';
@@ -119,15 +131,15 @@ export function ProjectExhibit({
           ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
           ctx.strokeRect(cardX, metricsY, cardWidth, cardHeight);
 
-          // Metric Value
+          // Attribute Value
           ctx.fillStyle = '#FFFFFF';
-          ctx.font = `bold ${isFeatured ? '22px' : '18px'} monospace`;
-          ctx.fillText(m.value, cardX + 16, metricsY + (isFeatured ? 36 : 30));
+          ctx.font = `bold ${isFeatured ? '18px' : '15px'} monospace`;
+          ctx.fillText(attr.value, cardX + 16, metricsY + (isFeatured ? 36 : 30));
 
-          // Metric Label
+          // Attribute Label
           ctx.fillStyle = '#8E8E93';
           ctx.font = '500 12px sans-serif';
-          ctx.fillText(m.label.toUpperCase(), cardX + 16, metricsY + (isFeatured ? 62 : 54));
+          ctx.fillText(attr.label.toUpperCase(), cardX + 16, metricsY + (isFeatured ? 62 : 54));
         });
 
         // 6. Technology Chips (Bottom Area)
@@ -157,9 +169,9 @@ export function ProjectExhibit({
         });
 
         // Subtle interactive hint at bottom right
-        ctx.fillStyle = '#636366';
+        ctx.fillStyle = '#8E8E93';
         ctx.font = '11px monospace';
-        ctx.fillText('CLICK TO INSPECT ARTIFACT', width - 210, height - 20);
+        ctx.fillText('CLICK EXHIBIT FOR COMPANION DETAILS', width - 260, height - 20);
       },
       {
         width: dims.texWidth,

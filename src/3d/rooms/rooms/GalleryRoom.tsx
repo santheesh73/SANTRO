@@ -46,11 +46,11 @@ export function GalleryRoom() {
         const previews = [
           { name: 'ORION', tag: 'ON-DEVICE AI', tier: 'PRIMARY' },
           { name: 'HEARTTUNE', tag: 'AUDIO ML PWA', tier: 'SELECTED' },
-          { name: 'NISF', tag: 'VECTOR CRITIQUE', tier: 'SELECTED' },
-          { name: 'AHAL AI', tag: 'CODE INTELLIGENCE', tier: 'SELECTED' },
-          { name: 'PRYSM', tag: 'GPU SHADERS', tier: 'SUPPORTING' },
-          { name: 'BHOOMI', tag: 'SIH AGRI ML', tier: 'SUPPORTING' },
-          { name: 'MINCHAL', tag: 'ENERGY OCR', tier: 'SUPPORTING' },
+          { name: 'NISF', tag: 'CREATIVE AI', tier: 'SELECTED' },
+          { name: 'AHAL AI', tag: 'CODE INTEL', tier: 'SELECTED' },
+          { name: 'PRYSM', tag: 'VISUAL COMPUTE', tier: 'SUPPORTING' },
+          { name: 'BHOOMI', tag: 'SIH ADVISORY', tier: 'SUPPORTING' },
+          { name: 'MINCHAL', tag: 'BILL ENERGY OCR', tier: 'SUPPORTING' },
         ];
 
         const cardW = (width - 72 - 6 * 12) / 7;

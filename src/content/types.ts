@@ -1,24 +1,40 @@
 /**
- * SANTRO M8 — Portfolio Spatial Content Model Types
+ * SANTRO M10 — Centralized Portfolio Content Model Types
  *
- * Strict type contracts separating raw portfolio content from 3D scene presentation.
+ * Strict type contracts separating raw verified portfolio content from 3D scene presentation.
+ * Adheres to M10 Content Accuracy & Readability Guidelines.
  */
 
 export type ProjectVariant = 'featured' | 'standard' | 'compact';
+
+export type ProjectStatus = 'implemented' | 'in-progress' | 'planned' | 'prototype' | 'concept';
+
+export interface ProjectAttribute {
+  label: string;
+  value: string;
+}
 
 export interface PortfolioProject {
   id: string;
   name: string;
   subtitle: string;
+  tagline?: string;
   shortDescription: string;
+  problem: string;
+  solution: string;
+  keyCapabilities: string[];
   category: string;
   year: string;
   role: string;
   technologies: string[];
-  highlights: string[];
-  metrics: { label: string; value: string }[];
+  status: ProjectStatus;
+  statusDetail: string;
   variant: ProjectVariant;
   accentColor: string;
+  room?: string;
+  attributes: ProjectAttribute[];
+  metrics: ProjectAttribute[]; // Backward compatibility with display surfaces
+  highlights?: string[];
   githubUrl?: string;
   liveUrl?: string;
   demoUrl?: string;
@@ -36,8 +52,10 @@ export interface ArchiveRecord {
   title: string;
   organization: string;
   year: string;
-  award?: string;
+  category: 'hackathon' | 'milestone' | 'open-source' | 'systems';
   description: string;
+  verificationNote?: string;
+  award?: string;
   metric?: string;
 }
 
@@ -67,6 +85,12 @@ export interface ContactData {
   channels: ContactChannel[];
 }
 
+export interface EducationData {
+  degree: string;
+  institution: string;
+  expectedGraduation: string;
+}
+
 export interface ProfileData {
   name: string;
   title: string;
@@ -74,6 +98,7 @@ export interface ProfileData {
   disciplines: string[];
   tagline: string;
   bio: string;
+  education?: EducationData;
   location: string;
   foyerHeadline: string;
   foyerSubheadline: string;
