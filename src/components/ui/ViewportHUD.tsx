@@ -71,6 +71,14 @@ export function ViewportHUD() {
   const isDoorOpen = useHouseStore((state) => state.isDoorOpen);
   const doorAngle = useHouseStore((state) => state.doorAngle);
 
+  // M9 Room Experience
+  const roomExperienceState = useHouseStore((state) => state.roomExperienceState);
+  const activeBeatLabel = useHouseStore((state) => state.activeBeatLabel);
+  const isInsideRoomExperience = useHouseStore((state) => state.isInsideRoomExperience);
+  const localRoomProgress = useHouseStore((state) => state.localRoomProgress);
+  const showRoomExperienceDebug = useHouseStore((state) => state.showRoomExperienceDebug);
+  const setShowRoomExperienceDebug = useHouseStore((state) => state.setShowRoomExperienceDebug);
+
   // M4 Material System
   const materialMode = useHouseStore((state) => state.materialMode);
   const setMaterialMode = useHouseStore((state) => state.setMaterialMode);
@@ -132,11 +140,26 @@ export function ViewportHUD() {
             </span>
           </div>
 
+          {/* M9 Room Experience Immersion Badge (shown when inside room experience) */}
+          {isInsideRoomExperience && (
+            <div className="flex flex-col gap-1 text-[8.5px] bg-violet-950/60 p-1.5 rounded border border-violet-500/40">
+              <div className="flex items-center justify-between">
+                <span className="text-violet-300 font-bold tracking-wider">ROOM IMMERSION:</span>
+                <span className="text-violet-200 font-semibold">{roomExperienceState} ({(localRoomProgress * 100).toFixed(0)}%)</span>
+              </div>
+              {activeBeatLabel && (
+                <div className="text-[8px] text-cyan-300 truncate font-mono">
+                  FOCUS: {activeBeatLabel}
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Current Camera State Badge */}
           <div className="flex items-center justify-between text-[9px] bg-white/5 px-2 py-1 rounded border border-white/5">
             <span className="text-neutral-400">STATE:</span>
             <span className="text-cyan-200 font-semibold tracking-wider">
-              {exteriorCameraState}
+              {isInsideRoomExperience ? roomExperienceState : exteriorCameraState}
             </span>
           </div>
 
@@ -227,6 +250,18 @@ export function ViewportHUD() {
             >
               <Sparkles size={10} />
               <span>3D SPLINE</span>
+            </button>
+
+            <button
+              onClick={() => setShowRoomExperienceDebug(!showRoomExperienceDebug)}
+              className={`px-2 py-1 rounded border transition-colors flex items-center gap-1 ${
+                showRoomExperienceDebug
+                  ? 'bg-violet-950/80 text-violet-200 border-violet-400/80 shadow-[0_0_6px_rgba(139,92,246,0.3)]'
+                  : 'bg-white/5 text-neutral-400 border-white/5 hover:bg-white/10'
+              }`}
+            >
+              <Sparkles size={10} />
+              <span>ROOM 360°</span>
             </button>
 
             <button
@@ -377,7 +412,13 @@ export function ViewportHUD() {
           <span className="text-neutral-200 font-medium">{currentZone}</span>
           <span className="text-neutral-600">•</span>
           <span className="text-neutral-500">STATE:</span>
-          <span className="text-cyan-300 font-semibold">{exteriorCameraState}</span>
+          <span className="text-cyan-300 font-semibold">{isInsideRoomExperience ? roomExperienceState : exteriorCameraState}</span>
+          {isInsideRoomExperience && (
+            <>
+              <span className="text-neutral-600">•</span>
+              <span className="text-violet-400 font-semibold">IMMERSION</span>
+            </>
+          )}
           <span className="text-neutral-600">•</span>
           <span className="text-neutral-500">DOOR:</span>
           <span className={isDoorOpen ? 'text-emerald-400 font-semibold' : 'text-neutral-400'}>

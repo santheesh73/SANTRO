@@ -1,6 +1,7 @@
 export * from './types';
 export * from './RoomRegistry';
 export * from './RoomSystem';
+export * from './experience';
 
 // Exhibits
 export * from './exhibits/ArchitecturalPlinth';

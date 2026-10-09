@@ -6,6 +6,7 @@ import { MaterialDisplayMode } from '@/3d/materials/types';
 import { TimeOfDayPreset, LightingDebugSolo } from '@/3d/lighting/types';
 import { CameraJourneyState } from '@/3d/camera/types';
 import { RoomId } from '@/3d/rooms/types';
+import { RoomExperienceState } from '@/3d/rooms/experience/types';
 
 export type CameraMode = 'cinematic' | 'inspect' | 'free' | 'spline';
 
@@ -20,6 +21,14 @@ export interface HouseState {
   showCameraSplineDebug: boolean;
   currentZone: SpatialZone;
   currentRoomId: RoomId;
+
+  // M9 Room Experience State
+  roomExperienceState: RoomExperienceState;
+  activeBeatId: string | null;
+  activeBeatLabel: string | null;
+  localRoomProgress: number; // 0.0 to 1.0 within active room
+  isInsideRoomExperience: boolean;
+  showRoomExperienceDebug: boolean;
 
   // Camera & Interaction
   cameraMode: CameraMode;
@@ -60,6 +69,11 @@ export interface HouseState {
   setCameraMode: (mode: CameraMode) => void;
   navigateToZone: (zone: SpatialZone) => void;
   setCurrentRoom: (roomId: RoomId) => void;
+  setRoomExperienceState: (state: RoomExperienceState) => void;
+  setActiveBeatId: (beatId: string | null, label?: string | null) => void;
+  setLocalRoomProgress: (progress: number) => void;
+  setIsInsideRoomExperience: (inside: boolean) => void;
+  setShowRoomExperienceDebug: (show: boolean) => void;
   setActiveRefCamera: (camId: ReferenceCameraId | null) => void;
   enterInspectMode: (targetId: string) => void;
   exitInspectMode: () => void;
@@ -88,6 +102,14 @@ export const useHouseStore = create<HouseState>((set) => ({
   showCameraSplineDebug: false,
   currentZone: 'EXTERIOR',
   currentRoomId: 'exterior',
+
+  // M9 Room Experience Initial State
+  roomExperienceState: 'IDLE',
+  activeBeatId: null,
+  activeBeatLabel: null,
+  localRoomProgress: 0.0,
+  isInsideRoomExperience: false,
+  showRoomExperienceDebug: false,
 
   cameraMode: 'cinematic',
   activeRefCamera: null,
@@ -165,9 +187,35 @@ export const useHouseStore = create<HouseState>((set) => ({
       currentZone: zone,
     }),
 
-  setCurrentRoom: (roomId) =>
+   setCurrentRoom: (roomId) =>
     set({
       currentRoomId: roomId,
+    }),
+
+  setRoomExperienceState: (state) =>
+    set({
+      roomExperienceState: state,
+    }),
+
+  setActiveBeatId: (beatId, label = null) =>
+    set({
+      activeBeatId: beatId,
+      activeBeatLabel: label,
+    }),
+
+  setLocalRoomProgress: (progress) =>
+    set({
+      localRoomProgress: Math.max(0, Math.min(1, progress)),
+    }),
+
+  setIsInsideRoomExperience: (inside) =>
+    set({
+      isInsideRoomExperience: inside,
+    }),
+
+  setShowRoomExperienceDebug: (show) =>
+    set({
+      showRoomExperienceDebug: show,
     }),
 
   setActiveRefCamera: (camId) =>

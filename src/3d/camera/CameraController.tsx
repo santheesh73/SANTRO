@@ -11,15 +11,14 @@ import { REFERENCE_CAMERAS } from './referenceCameras';
 import { CAMERA_CONFIG } from './CameraConfig';
 import { CameraRig } from './CameraRig';
 import {
-  evaluateUnifiedPosition,
-  evaluateUnifiedTarget,
-  evaluateUnifiedFov,
   getUnifiedStateAtProgress,
   evaluateInteriorTransitionFactor,
 } from './CameraPath';
 import { getDampingFactor } from './CameraInterpolation';
 import { useCameraInput } from './useCameraInput';
 import { CameraJourneyState } from './types';
+import { roomExperienceController } from '@/3d/rooms/experience/RoomExperienceController';
+import { RoomExperienceState } from '@/3d/rooms/experience/types';
 
 /**
  * Maps unified camera journey states to architectural spatial zones
@@ -90,6 +89,11 @@ export function CameraController({ enableControls = true }: CameraControllerProp
   const setExteriorCameraState = useHouseStore((state) => state.setExteriorCameraState);
   const setInteriorFactor = useHouseStore((state) => state.setInteriorFactor);
   const setCinematicProgress = useHouseStore((state) => state.setCinematicProgress);
+  const setRoomExperienceState = useHouseStore((state) => state.setRoomExperienceState);
+  const setActiveBeatId = useHouseStore((state) => state.setActiveBeatId);
+  const setLocalRoomProgress = useHouseStore((state) => state.setLocalRoomProgress);
+  const setIsInsideRoomExperience = useHouseStore((state) => state.setIsInsideRoomExperience);
+  const setCurrentRoom = useHouseStore((state) => state.setCurrentRoom);
 
   // Transition targets for reference/inspect modes
   const refTargetPos = useRef<THREE.Vector3>(new THREE.Vector3(4.2, 12.5, 26.0));
@@ -105,6 +109,13 @@ export function CameraController({ enableControls = true }: CameraControllerProp
   const prevStateRef = useRef<CameraJourneyState>('EXTERIOR_ESTABLISHING');
   const clockRef = useRef<number>(0.0);
   const prevCameraModeRef = useRef<string>(cameraMode);
+
+  // M9 Room Experience refs for 0-cascade store synchronization
+  const lastRoomStateRef = useRef<RoomExperienceState>('IDLE');
+  const lastBeatIdRef = useRef<string | null>(null);
+  const lastInsideExpRef = useRef<boolean>(false);
+  const lastLocalProgressRef = useRef<number>(0.0);
+  const lastActiveRoomIdRef = useRef<string>('exterior');
 
   // Listen to reference camera selections or preview toggles
   useEffect(() => {
@@ -187,16 +198,20 @@ export function CameraController({ enableControls = true }: CameraControllerProp
 
       const p = currentProgressRef.current;
 
-      // 1. Evaluate Unified Spline Path Position & Look Target
-      evaluateUnifiedPosition(p, _desiredPos);
-      evaluateUnifiedTarget(p, _desiredTarget);
-      let targetFov = evaluateUnifiedFov(p);
-
-      // 2. Responsive Adaptation (Tablet & Mobile framing)
+      // 1. Responsive Adaptation (Tablet & Mobile framing)
       const isMobile = size.width < CAMERA_CONFIG.responsive.mobileBreakpoint;
       const isTablet =
         size.width >= CAMERA_CONFIG.responsive.mobileBreakpoint &&
         size.width < CAMERA_CONFIG.responsive.tabletBreakpoint;
+
+      // 2. Evaluate Unified Trajectory with Authored Room Experiences
+      const roomEval = roomExperienceController.evaluate(p, _desiredPos, _desiredTarget, {
+        isMobile,
+        isTablet,
+        clockTime: clockRef.current,
+      });
+
+      let targetFov = roomEval.fov;
 
       if (isMobile) {
         targetFov += CAMERA_CONFIG.responsive.mobileFovOffset;
@@ -242,6 +257,43 @@ export function CameraController({ enableControls = true }: CameraControllerProp
         if (useHouseStore.getState().currentZone !== mappedZone) {
           useHouseStore.getState().navigateToZone(mappedZone);
         }
+      }
+
+      // 7b. Update M9 Room Experience State & Beat (Ref-throttled, zero redundant dispatches)
+      if (roomEval.isInsideExperience) {
+        if (roomEval.state !== lastRoomStateRef.current) {
+          lastRoomStateRef.current = roomEval.state;
+          setRoomExperienceState(roomEval.state);
+        }
+
+        const newBeatId = roomEval.activeBeat?.id ?? null;
+        if (newBeatId !== lastBeatIdRef.current) {
+          lastBeatIdRef.current = newBeatId;
+          setActiveBeatId(newBeatId, roomEval.activeBeat?.label ?? null);
+        }
+
+        if (!lastInsideExpRef.current) {
+          lastInsideExpRef.current = true;
+          setIsInsideRoomExperience(true);
+        }
+
+        if (Math.abs(roomEval.localProgress - lastLocalProgressRef.current) >= 0.01) {
+          lastLocalProgressRef.current = roomEval.localProgress;
+          setLocalRoomProgress(roomEval.localProgress);
+        }
+      } else if (lastInsideExpRef.current) {
+        lastInsideExpRef.current = false;
+        lastRoomStateRef.current = 'IDLE';
+        lastBeatIdRef.current = null;
+        setIsInsideRoomExperience(false);
+        setRoomExperienceState('IDLE');
+        setActiveBeatId(null);
+      }
+
+      // 7c. Synchronize Active Portfolio Room ID in Store
+      if (roomEval.activeRoomId && roomEval.activeRoomId !== lastActiveRoomIdRef.current) {
+        lastActiveRoomIdRef.current = roomEval.activeRoomId;
+        setCurrentRoom(roomEval.activeRoomId);
       }
 
       // 8. Update Interior Transition Factor for subtle iris / exposure adaptation

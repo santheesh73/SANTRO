@@ -14,6 +14,7 @@ import { MaterialPreviewScene } from '@/3d/materials/MaterialPreviewScene';
 import { getDefaultHouseModelUrl } from '@/3d/assets/config';
 import { useHouseStore } from '@/3d/state/useHouseStore';
 import { RoomSystem } from '@/3d/rooms/RoomSystem';
+import { RoomExperienceDebug } from '@/3d/rooms/experience/RoomExperienceDebug';
 
 interface ArchitecturalSceneProps {
   modelUrl?: string | null;
@@ -47,6 +48,9 @@ export function ArchitecturalScene({
 
       {/* 2c. Camera Spline & Waypoints Debug Visualizer */}
       <CameraDebug />
+
+      {/* 2d. M9 Room Experience Inspection Trajectory & Anchors Visualizer */}
+      <RoomExperienceDebug />
 
       {/* 3. Atmospheric Sky & Ground Horizon */}
       <Atmosphere />
